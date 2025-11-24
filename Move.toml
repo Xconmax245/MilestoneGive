@@ -1,0 +1,8 @@
+[package]
+name = "milestonegive"
+version = "0.1.0"
+
+[addresses]
+MilestoneGive = "0x04d7fa99038b8bd0633d2e05e3dda0ff4a29d16c81f34d8d6d90699353db7879"
+
+[dependencies]
