@@ -1,0 +1,3025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use MilestoneGive - Complete Guide</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 20%, rgba(34, 197, 94, 0.15), transparent 50%),
+                        radial-gradient(ellipse at 80% 60%, rgba(59, 130, 246, 0.1), transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(147, 51, 234, 0.1), transparent 50%);
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .nav-link {
+            color: #9CA3AF;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 0.5rem 0;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9CA3AF;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            transform: translateY(-2px);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+        }
+        
+        .hamburger {
+            width: 28px;
+            height: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 60;
+            position: relative;
+        }
+        
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center;
+            display: block;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(10.5px) rotate(45deg);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-10.5px) rotate(-45deg);
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow-y: auto;
+            z-index: 40;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-menu-content {
+            padding: 2rem 1.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .mobile-nav-link {
+            color: #9CA3AF;
+            font-size: 1.125rem;
+            font-weight: 500;
+            padding: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .mobile-nav-link:hover {
+            color: white;
+            padding-left: 0.5rem;
+        }
+        
+        .mobile-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .mobile-dropdown.active {
+            max-height: 600px;
+        }
+        
+        .mobile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            margin: 0.25rem 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            color: #9CA3AF;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .mobile-dropdown-item:hover {
+            background: rgba(34, 197, 94, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .desktop-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
+            width: 16rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        
+        .desktop-dropdown-wrapper:hover .desktop-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        .desktop-dropdown-content {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .desktop-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .desktop-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+        
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        /* Step Cards */
+        .step-card {
+            position: relative;
+            padding: 2rem;
+            transition: all 0.4s ease;
+        }
+
+        .step-card:hover {
+            transform: translateX(8px);
+        }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .accordion-item {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .accordion-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-content.active {
+            max-height: 2000px;
+        }
+
+        .accordion-inner {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-item {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(34, 197, 94, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            color: #22c55e;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #22c55e, #3b82f6);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -2.5rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #22c55e;
+            border: 3px solid #000;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: #9CA3AF;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: white;
+        }
+
+        .tab-btn.active {
+            color: #22c55e;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .info-box {
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            margin: 1.5rem 0;
+        }
+
+        .info-box.tip {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+        }
+
+        .info-box.warning {
+            background: rgba(234, 179, 8, 0.1);
+            border-color: #eab308;
+        }
+
+        .info-box.danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        .info-box.note {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .progress-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 0;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.completed {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-color: #22c55e;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="gradient-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="content">
+        <!-- Navigation -->
+        <nav class="fixed w-full top-0 z-50 glass-card">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold mono">MilestoneGive</span>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-8">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="All-cause.html" class="nav-link">Browse Causes</a>
+                    <a href="how it works.HTML" class="nav-link">How It Works</a>
+                    
+                    <div class="relative desktop-dropdown-wrapper">
+                        <button class="nav-link flex items-center gap-1">
+                            Resources
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        
+                        <div class="desktop-dropdown">
+                            <div class="desktop-dropdown-content">
+                                <div class="py-2">
+                                    <a href="#documentation" class="desktop-dropdown-item">
+                                        <i data-lucide="book-open" class="w-5 h-5 text-green-400"></i>
+                                        <span>Documentation</span>
+                                    </a>
+                                    <a href="#whitepaper" class="desktop-dropdown-item">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+                                        <span>Whitepaper</span>
+                                    </a>
+                                    <a href="#api" class="desktop-dropdown-item">
+                                        <i data-lucide="code-2" class="w-5 h-5 text-cyan-400"></i>
+                                        <span>API Reference</span>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#support" class="desktop-dropdown-item">
+                                        <i data-lucide="headphones" class="w-5 h-5 text-orange-400"></i>
+                                        <span>Support Center</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="https://twitter.com" class="social-icon" target="_blank">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com" class="social-icon" target="_blank">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </a>
+                    <button class="primary-btn">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Connect Wallet</span>
+                    </button>
+                </div>
+
+                <div class="lg:hidden flex items-center gap-3">
+                    <button class="primary-btn px-3 py-2">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                    </button>
+                    
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobile-menu">
+                <div class="mobile-menu-content">
+                    <a href="index.html" class="mobile-nav-link">
+                        <span>Home</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="All-cause.html" class="mobile-nav-link">
+                        <span>Browse Causes</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="how it works.HTML" class="mobile-nav-link">
+                        <span>How It Works</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    
+                    <div>
+                        <button class="mobile-nav-link w-full" id="mobile-resources-toggle">
+                            <span>Resources</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5" id="mobile-dropdown-icon"></i>
+                        </button>
+                        
+                        <div class="mobile-dropdown" id="mobile-resources-dropdown">
+                            <div class="py-2 pl-2">
+                                <a href="whitepaper.html" class="mobile-dropdown-item">
+                                    <i data-lucide="book-open" class="w-5 h-5 text-green-400"></i>
+                                    <span>Documentation</span>
+                                </a>
+                                <a href="whitepaper.html" class="mobile-dropdown-item">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+                                    <span>Whitepaper</span>
+                                </a>
+                                <a href="#api" class="mobile-dropdown-item">
+                                    <i data-lucide="code-2" class="w-5 h-5 text-cyan-400"></i>
+                                    <span>API Reference</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#support" class="mobile-dropdown-item">
+                                    <i data-lucide="headphones" class="w-5 h-5 text-orange-400"></i>
+                                    <span>Support Center</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/10">
+                        <p class="text-gray-400 text-sm mb-4">Follow Us</p>
+                        <div class="flex items-center gap-3">
+                            <a href="https://twitter.com" class="social-icon" target="_blank">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                            <a href="https://github.com" class="social-icon" target="_blank">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main style="margin-top: 72px;">
+            <!-- Hero Section -->
+            <section class="px-6 py-20 relative">
+                <div class="max-w-7xl mx-auto text-center">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-full mb-6" data-aos="fade-up">
+                        <i data-lucide="book-open" class="w-4 h-4 text-green-400"></i>
+                        <span class="text-sm font-semibold text-green-400 mono">COMPREHENSIVE GUIDE</span>
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6" data-aos="fade-up" data-aos-delay="100">
+                        How to Use
+                        <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">MilestoneGive</span>
+                    </h1>
+                    
+                    <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-8" data-aos="fade-up" data-aos-delay="200">
+                        Master the art of transparent, milestone-based charitable giving on the blockchain. This comprehensive guide will walk you through every feature, from wallet setup to creating and managing campaigns.
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-4 mb-12" data-aos="fade-up" data-aos-delay="300">
+                        <span class="badge badge-success">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Blockchain Secured
+                        </span>
+                        <span class="badge badge-info">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            Milestone Verified
+                        </span>
+                        <span class="badge badge-warning">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            Real-Time Tracking
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Tutorial Section -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-5xl mx-auto">
+                    <div class="glass-section p-8" data-aos="fade-up">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
+                                <i data-lucide="play-circle" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold">Video Tutorial</h2>
+                                <p class="text-gray-400 text-sm mono">Complete walkthrough in under 10 minutes</p>
+                            </div>
+                        </div>
+
+                        <div class="video-container mb-6">
+                            <div class="video-placeholder">
+                                <i data-lucide="video" class="w-24 h-24 text-gray-600"></i>
+                                <p class="text-gray-400 text-lg font-semibold">Video Tutorial Coming Soon</p>
+                                <p class="text-gray-500 text-sm mono">Upload your instructional video here</p>
+                                <button class="mt-4 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/50 transition-all duration-300">
+                                    <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+                                    Upload Video
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="clock" class="w-5 h-5 text-green-400"></i>
+                                    <span class="font-semibold text-sm">Duration</span>
+                                </div>
+                                <p class="text-gray-400 text-sm">8 minutes 42 seconds</p>
+                            </div>
+                            <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-400"></i>
+                                    <span class="font-semibold text-sm">Difficulty</span>
+                                </div>
+                                <p class="text-gray-400 text-sm">Beginner Friendly</p>
+                            </div>
+                            <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i data-lucide="languages" class="w-5 h-5 text-purple-400"></i>
+                                    <span class="font-semibold text-sm">Languages</span>
+                                </div>
+                                <p class="text-gray-400 text-sm">English, Spanish, French</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Start Guide -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Quick Start Guide</h2>
+                        <p class="text-gray-400 text-lg mono">Get started in 5 simple steps</p>
+                    </div>
+
+                    <div class="progress-indicator mb-12" data-aos="fade-up" data-aos-delay="100">
+                        <div class="progress-step completed">1</div>
+                        <div class="progress-step completed">2</div>
+                        <div class="progress-step completed">3</div>
+                        <div class="progress-step active">4</div>
+                        <div class="progress-step">5</div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Step 1 -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="step-number bg-gradient-to-br from-green-500 to-emerald-600">
+                                <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Connect Wallet</h3>
+                            <p class="text-gray-400 mb-4">
+                                Install and connect a compatible Aptos wallet (Petra, Martian, or Pontem) to start your journey on MilestoneGive.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded mono">Petra</span>
+                                <span class="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded mono">Martian</span>
+                                <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded mono">Pontem</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="200">
+                            <div class="step-number bg-gradient-to-br from-blue-500 to-cyan-600">
+                                <i data-lucide="search" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Browse Causes</h3>
+                            <p class="text-gray-400 mb-4">
+                                Explore verified campaigns across multiple categories. Filter by impact area, progress, or funding goals.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded mono">Water</span>
+                                <span class="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded mono">Education</span>
+                                <span class="text-xs px-2 py-1 bg-red-500/20 text-red-400 rounded mono">Healthcare</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="300">
+                            <div class="step-number bg-gradient-to-br from-purple-500 to-pink-600">
+                                <i data-lucide="file-search" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Review Milestones</h3>
+                            <p class="text-gray-400 mb-4">
+                                Examine the detailed milestone breakdown, verification requirements, and progress tracking for each campaign.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded mono">Transparent</span>
+                                <span class="text-xs px-2 py-1 bg-pink-500/20 text-pink-400 rounded mono">Verified</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="400">
+                            <div class="step-number bg-gradient-to-br from-orange-500 to-red-600">
+                                <i data-lucide="heart-handshake" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Make Donation</h3>
+                            <p class="text-gray-400 mb-4">
+                                Choose your contribution amount and send APT tokens directly to the campaign's smart contract address.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-orange-500/20 text-orange-400 rounded mono">Secure</span>
+                                <span class="text-xs px-2 py-1 bg-red-500/20 text-red-400 rounded mono">Instant</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="500">
+                            <div class="step-number bg-gradient-to-br from-cyan-500 to-blue-600">
+                                <i data-lucide="activity" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Track Impact</h3>
+                            <p class="text-gray-400 mb-4">
+                                Monitor real-time updates on milestone completion, fund utilization, and campaign progress through your dashboard.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded mono">Real-time</span>
+                                <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded mono">Detailed</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 6 - Bonus -->
+                        <div class="glass-section step-card" data-aos="fade-up" data-aos-delay="600">
+                            <div class="step-number bg-gradient-to-br from-pink-500 to-rose-600">
+                                <i data-lucide="plus-circle" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Create Campaign</h3>
+                            <p class="text-gray-400 mb-4">
+                                Launch your own verified campaign with custom milestones, funding goals, and transparent progress tracking.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs px-2 py-1 bg-pink-500/20 text-pink-400 rounded mono">Optional</span>
+                                <span class="text-xs px-2 py-1 bg-rose-500/20 text-rose-400 rounded mono">Advanced</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Sections with Tabs -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">In-Depth Guides</h2>
+                        <p class="text-gray-400 text-lg mono">Master every aspect of the platform</p>
+                    </div>
+
+                    <div class="glass-section p-8" data-aos="fade-up" data-aos-delay="100">
+                        <div class="tab-nav">
+                            <button class="tab-btn active" data-tab="donors">
+                                <i data-lucide="heart" class="w-4 h-4 inline mr-2"></i>
+                                For Donors
+                            </button>
+                            <button class="tab-btn" data-tab="creators">
+                                <i data-lucide="rocket" class="w-4 h-4 inline mr-2"></i>
+                                For Campaign Creators
+                            </button>
+                            <button class="tab-btn" data-tab="verification">
+                                <i data-lucide="shield-check" class="w-4 h-4 inline mr-2"></i>
+                                Verification Process
+                            </button>
+                            <button class="tab-btn" data-tab="blockchain">
+                                <i data-lucide="link" class="w-4 h-4 inline mr-2"></i>
+                                Blockchain Integration
+                            </button>
+                            <button class="tab-btn" data-tab="advanced">
+                                <i data-lucide="code-2" class="w-4 h-4 inline mr-2"></i>
+                                Advanced Features
+                            </button>
+                        </div>
+
+                        <!-- Tab Content: Donors -->
+                        <div class="tab-content active" id="tab-donors">
+                            <h3 class="text-3xl font-bold mb-6">Complete Guide for Donors</h3>
+                            
+                            <div class="info-box tip mb-6">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="lightbulb" class="w-6 h-6 text-green-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h4 class="font-bold text-green-400 mb-2">Pro Tip</h4>
+                                        <p class="text-gray-300">Start with smaller donations to familiarize yourself with the platform before making larger contributions. This helps you understand the milestone verification process.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timeline mb-8">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <h4 class="text-xl font-bold mb-2">1. Wallet Setup & Connection</h4>
+                                    <p class="text-gray-400 mb-3">
+                                        Before you can donate, you need to set up an Aptos-compatible wallet. We support three major wallet providers:
+                                    </p>
+                                    <div class="feature-grid mb-4">
+                                        <div class="feature-item">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <i data-lucide="wallet" class="w-5 h-5 text-red-400"></i>
+                                                <h5 class="font-bold">Petra Wallet</h5>
+                                            </div>
+                                            <p class="text-sm text-gray-400 mb-2">The most popular Aptos wallet with a user-friendly interface.</p>
+                                            <a href="https://petra.app/" target="_blank" class="text-xs text-red-400 hover:text-red-300 mono">petra.app →</a>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <i data-lucide="wallet" class="w-5 h-5 text-purple-400"></i>
+                                                <h5 class="font-bold">Martian Wallet</h5>
+                                            </div>
+                                            <p class="text-sm text-gray-400 mb-2">Multi-chain wallet with advanced features for power users.</p>
+                                            <a href="https://martianwallet.xyz/" target="_blank" class="text-xs text-purple-400 hover:text-purple-300 mono">martianwallet.xyz →</a>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <i data-lucide="wallet" class="w-5 h-5 text-green-400"></i>
+                                                <h5 class="font-bold">Pontem Wallet</h5>
+                                            </div>
+                                            <p class="text-sm text-gray-400 mb-2">Built specifically for Aptos ecosystem with DeFi integration.</p>
+                                            <a href="https://pontem.network/" target="_blank" class="text-xs text-green-400 hover:text-green-300 mono">pontem.network →</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <h4 class="text-xl font-bold mb-2">2. Finding the Right Cause</h4>
+                                    <p class="text-gray-400 mb-3">
+                                        MilestoneGive offers sophisticated filtering and search capabilities to help you find causes that align with your values:
+                                    </p>
+                                    <ul class="space-y-2 text-gray-400 mb-4">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Category Filters:</strong> Browse by Water, Education, Healthcare, Environment, or Technology initiatives</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Progress Tracking:</strong> Sort campaigns by completion percentage to support nearly-funded projects</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Geographic Focus:</strong> Filter causes by region or country to support local communities</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Impact Metrics:</strong> View detailed statistics on beneficiaries reached and milestones achieved</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <h4 class="text-xl font-bold mb-2">3. Understanding Milestones</h4>
+                                    <p class="text-gray-400 mb-3">
+                                        Each campaign is divided into verifiable milestones. Here's how to evaluate them:
+                                    </p>
+                                    <div class="code-block">
+                                        <code>
+Milestone Structure Example:
+┌─────────────────────────────────────┐
+│ Milestone 1: Initial Setup (25%)    │
+│ ├─ Budget: $10,000                  │
+│ ├─ Timeline: Weeks 1-4              │
+│ ├─ Deliverables:                    │
+│ │  • Site survey completed          │
+│ │  • Permits acquired               │
+│ │  • Equipment purchased            │
+│ └─ Verification: Photo + Receipt    │
+└─────────────────────────────────────┘
+                                        </code>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <h4 class="text-xl font-bold mb-2">4. Making Your Donation</h4>
+                                    <p class="text-gray-400 mb-3">
+                                        The donation process is streamlined for security and ease of use:
+                                    </p>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                            <h5 class="font-bold mb-2 flex items-center gap-2">
+                                                <i data-lucide="mouse-pointer-click" class="w-5 h-5 text-blue-400"></i>
+                                                Step 1: Select Amount
+                                            </h5>
+                                            <p class="text-sm text-gray-400">Choose your contribution amount in APT tokens. The platform displays USD equivalent in real-time.</p>
+                                        </div>
+                                        <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                            <h5 class="font-bold mb-2 flex items-center gap-2">
+                                                <i data-lucide="eye" class="w-5 h-5 text-green-400"></i>
+                                                Step 2: Review Details
+                                            </h5>
+                                            <p class="text-sm text-gray-400">Verify campaign information, recipient address, and transaction fees before proceeding.</p>
+                                        </div>
+                                        <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                            <h5 class="font-bold mb-2 flex items-center gap-2">
+                                                <i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i>
+                                                Step 3: Approve Transaction
+                                            </h5>
+                                            <p class="text-sm text-gray-400">Confirm the transaction in your wallet. Your private keys never leave your device.</p>
+                                        </div>
+                                        <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                                            <h5 class="font-bold mb-2 flex items-center gap-2">
+                                                <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400"></i>
+                                                Step 4: Get Confirmation
+                                            </h5>
+                                            <p class="text-sm text-gray-400">Receive transaction hash and on-chain confirmation of your contribution.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <h4 class="text-xl font-bold mb-2">5. Tracking Your Impact</h4>
+                                    <p class="text-gray-400 mb-3">
+                                        After donating, you gain access to comprehensive tracking tools:
+                                    </p>
+                                    <ul class="space-y-3">
+                                        <li class="p-3 bg-white/5 rounded-lg">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <i data-lucide="bell-ring" class="w-5 h-5 text-yellow-400"></i>
+                                                <span class="font-bold">Milestone Notifications</span>
+                                            </div>
+                                            <p class="text-sm text-gray-400">Receive real-time alerts when milestones are completed and verified</p>
+                                        </li>
+                                        <li class="p-3 bg-white/5 rounded-lg">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <i data-lucide="image" class="w-5 h-5 text-blue-400"></i>
+                                                <span class="font-bold">Photo & Video Updates</span>
+                                            </div>
+                                            <p class="text-sm text-gray-400">View documentary evidence uploaded by campaign creators</p>
+                                        </li>
+                                        <li class="p-3 bg-white/5 rounded-lg">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <i data-lucide="trending-up" class="w-5 h-5 text-green-400"></i>
+                                                <span class="font-bold">Fund Utilization Reports</span>
+                                            </div>
+                                            <p class="text-sm text-gray-400">Access detailed breakdowns of how donations are being spent</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="info-box warning">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="alert-triangle" class="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h4 class="font-bold text-yellow-400 mb-2">Important Security Notice</h4>
+                                        <p class="text-gray-300">Always verify the campaign smart contract address before donating. MilestoneGive will never ask for your private keys or seed phrases. Be cautious of phishing attempts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Campaign Creators -->
+                        <div class="tab-content" id="tab-creators">
+                            <h3 class="text-3xl font-bold mb-6">Guide for Campaign Creators</h3>
+                            
+                            <p class="text-gray-400 text-lg mb-8">
+                                Creating a successful campaign on MilestoneGive requires careful planning, transparent communication, and rigorous milestone definition. Follow this comprehensive guide to launch your project.
+                            </p>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="creator-1">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="user-check" class="w-6 h-6 text-green-400"></i>
+                                        <h4 class="text-xl font-bold">Account Verification & Requirements</h4>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-4">
+                                            Before creating a campaign, you must complete our multi-stage verification process to ensure accountability and donor trust.
+                                        </p>
+                                        
+                                        <h5 class="font-bold text-lg mb-3">Required Documentation:</h5>
+                                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                                            <div class="p-4 bg-white/5 rounded-lg">
+                                                <i data-lucide="building-2" class="w-6 h-6 text-blue-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Organization Credentials</h6>
+                                                <ul class="text-sm text-gray-400 space-y-1">
+                                                    <li>• Registered charity/NPO number</li>
+                                                    <li>• Tax exemption certificate</li>
+                                                    <li>• Board of directors information</li>
+                                                    <li>• Annual financial statements (2 years)</li>
+                                                </ul>
+                                            </div>
+                                            <div class="p-4 bg-white/5 rounded-lg">
+                                                <i data-lucide="user-square" class="w-6 h-6 text-purple-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Personal Identity</h6>
+                                                <ul class="text-sm text-gray-400 space-y-1">
+                                                    <li>• Government-issued ID (passport/license)</li>
+                                                    <li>• Proof of address (utility bill)</li>
+                                                    <li>• Professional references (3 minimum)</li>
+                                                    <li>• LinkedIn or professional profile</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-box note">
+                                            <div class="flex items-start gap-3">
+                                                <i data-lucide="info" class="w-6 h-6 text-blue-400 flex-shrink-0 mt-1"></i>
+                                                <div>
+                                                    <h5 class="font-bold text-blue-400 mb-2">Verification Timeline</h5>
+                                                    <p class="text-gray-300 text-sm">The verification process typically takes 5-7 business days. You'll receive status updates via email at each stage. Expedited verification (48 hours) is available for urgent campaigns with an additional fee.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="creator-2">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="target" class="w-6 h-6 text-blue-400"></i>
+                                        <h4 class="text-xl font-bold">Defining Milestones & Goals</h4>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-4">
+                                            Milestones are the foundation of transparency on MilestoneGive. Each milestone should represent a concrete, verifiable achievement with clear deliverables.
+                                        </p>
+
+                                        <h5 class="font-bold text-lg mb-3">Milestone Best Practices:</h5>
+                                        <div class="space-y-4 mb-6">
+                                            <div class="p-4 border-l-4 border-green-500 bg-green-500/10 rounded">
+                                                <h6 class="font-bold text-green-400 mb-2">✓ GOOD: Specific & Measurable</h6>
+                                                <p class="text-sm text-gray-300">"Install 5 solar water pumps in designated villages, each with 500L daily capacity, documented with GPS coordinates and flow rate measurements."</p>
+                                            </div>
+                                            <div class="p-4 border-l-4 border-red-500 bg-red-500/10 rounded">
+                                                <h6 class="font-bold text-red-400 mb-2">✗ BAD: Vague & Unmeasurable</h6>
+                                                <p class="text-sm text-gray-300">"Improve water access in the region."</p>
+                                            </div>
+                                        </div>
+
+                                        <h5 class="font-bold text-lg mb-3">Required Milestone Components:</h5>
+                                        <div class="code-block mb-6">
+                                            <code>
+{
+  "milestone_id": "M001",
+  "title": "Site Preparation & Equipment Acquisition",
+  "description": "Detailed description of what will be accomplished",
+  "budget_allocation": 15000, // USD equivalent
+  "timeline": {
+    "start_date": "2024-01-15",
+    "end_date": "2024-02-15",
+    "duration_days": 31
+  },
+  "deliverables": [
+    "Land survey and soil analysis report",
+    "Building permits from local authorities",
+    "Equipment purchase receipts and photos",
+    "Safety compliance certification"
+  ],
+  "verification_criteria": {
+    "photo_evidence": true,
+    "video_walkthrough": true,
+    "third_party_audit": false,
+    "receipts_required": true,
+    "gps_location": true
+  },
+  "payment_trigger": "auto_release_on_verification"
+}
+                                            </code>
+                                        </div>
+
+                                        <div class="info-box tip">
+                                            <div class="flex items-start gap-3">
+                                                <i data-lucide="lightbulb" class="w-6 h-6 text-green-400 flex-shrink-0 mt-1"></i>
+                                                <div>
+                                                    <h5 class="font-bold text-green-400 mb-2">Pro Strategy</h5>
+                                                    <p class="text-gray-300 text-sm">Break larger projects into 5-8 milestones. This creates frequent updates for donors, builds momentum, and makes verification more manageable. Aim for milestone completion every 2-4 weeks.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="creator-3">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="file-text" class="w-6 h-6 text-purple-400"></i>
+                                        <h4 class="text-xl font-bold">Campaign Page Creation</h4>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-6">
+                                            Your campaign page is your opportunity to tell your story and connect with donors. Compelling campaigns typically see 3-5x higher conversion rates.
+                                        </p>
+
+                                        <div class="grid md:grid-cols-3 gap-4 mb-6">
+                                            <div class="feature-item">
+                                                <i data-lucide="image" class="w-8 h-8 text-blue-400 mb-3"></i>
+                                                <h6 class="font-bold mb-2">Visual Content</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Upload high-quality photos and videos that showcase your work and the communities you serve.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Hero image: 1920x1080px</li>
+                                                    <li>• Gallery: 5-10 photos minimum</li>
+                                                    <li>• Video: 2-3 minutes ideal</li>
+                                                    <li>• Before/after comparisons</li>
+                                                </ul>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="type" class="w-8 h-8 text-green-400 mb-3"></i>
+                                                <h6 class="font-bold mb-2">Written Content</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Craft a compelling narrative that explains the problem, your solution, and the expected impact.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Problem statement (100-150 words)</li>
+                                                    <li>• Solution overview (150-200 words)</li>
+                                                    <li>• Impact projections with data</li>
+                                                    <li>• Team bios and credentials</li>
+                                                </ul>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="bar-chart-3" class="w-8 h-8 text-purple-400 mb-3"></i>
+                                                <h6 class="font-bold mb-2">Data & Metrics</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Include concrete numbers that demonstrate need and projected outcomes.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Beneficiary count (specific)</li>
+                                                    <li>• Geographic scope with maps</li>
+                                                    <li>• Budget breakdown (itemized)</li>
+                                                    <li>• Timeline and key dates</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-lg">
+                                            <h6 class="font-bold text-lg mb-3 flex items-center gap-2">
+                                                <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+                                                Content Optimization Checklist
+                                            </h6>
+                                            <div class="grid md:grid-cols-2 gap-3">
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Clear, concise title (under 60 characters)</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Emotional connection without manipulation</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Professional photography (no stock images)</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Detailed budget with cost justification</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Team credentials and past successes</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
+                                                    <span>Risk mitigation and contingency plans</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="creator-4">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="megaphone" class="w-6 h-6 text-orange-400"></i>
+                                        <h4 class="text-xl font-bold">Promotion & Marketing Strategy</h4>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-6">
+                                            Creating a campaign is just the beginning. Active promotion is essential for reaching your funding goals. Here's a multi-channel strategy that works.
+                                        </p>
+
+                                        <div class="feature-grid">
+                                            <div class="feature-item">
+                                                <i data-lucide="users" class="w-6 h-6 text-blue-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Social Media</h6>
+                                                <p class="text-sm text-gray-400">Share regular updates across platforms with engaging visuals and milestone achievements.</p>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="mail" class="w-6 h-6 text-green-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Email Campaigns</h6>
+                                                <p class="text-sm text-gray-400">Build an email list and send weekly progress reports to keep supporters engaged.</p>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="newspaper" class="w-6 h-6 text-purple-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Media Outreach</h6>
+                                                <p class="text-sm text-gray-400">Contact local journalists and bloggers with compelling story angles about your cause.</p>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="handshake" class="w-6 h-6 text-yellow-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Partnership Building</h6>
+                                                <p class="text-sm text-gray-400">Collaborate with complementary organizations to cross-promote campaigns.</p>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="calendar" class="w-6 h-6 text-red-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Events & Webinars</h6>
+                                                <p class="text-sm text-gray-400">Host virtual or in-person events to showcase your work and connect with donors.</p>
+                                            </div>
+                                            <div class="feature-item">
+                                                <i data-lucide="trending-up" class="w-6 h-6 text-cyan-400 mb-2"></i>
+                                                <h6 class="font-bold mb-2">Influencer Partnerships</h6>
+                                                <p class="text-sm text-gray-400">Engage micro-influencers in your cause area for authentic endorsements.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Verification Process -->
+                        <div class="tab-content" id="tab-verification">
+                            <h3 class="text-3xl font-bold mb-6">Milestone Verification System</h3>
+                            
+                            <p class="text-gray-400 text-lg mb-8">
+                                Our rigorous verification process ensures that donations are used as intended and milestones are genuinely achieved. This builds trust and accountability into every transaction.
+                            </p>
+
+                            <div class="glass-section p-6 mb-8" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3);">
+                                <div class="flex items-start gap-4">
+                                    <i data-lucide="shield-check" class="w-12 h-12 text-green-400 flex-shrink-0"></i>
+                                    <div>
+                                        <h4 class="text-xl font-bold mb-2">Three-Tier Verification Model</h4>
+                                        <p class="text-gray-300 mb-4">
+                                            MilestoneGive employs a multi-layered approach combining automated checks, community review, and professional auditing to ensure maximum transparency and accountability.
+                                        </p>
+                                        <div class="grid md:grid-cols-3 gap-4">
+                                            <div class="p-4 bg-black/30 rounded-lg">
+                                                <h5 class="font-bold text-green-400 mb-2">Tier 1: Automated</h5>
+                                                <p class="text-sm text-gray-400">Smart contract validation, GPS verification, timestamp checking, document format validation</p>
+                                            </div>
+                                            <div class="p-4 bg-black/30 rounded-lg">
+                                                <h5 class="font-bold text-blue-400 mb-2">Tier 2: Community</h5>
+                                                <p class="text-sm text-gray-400">Donor voting system, public comment period, reputation scoring, fraud reporting mechanisms</p>
+                                            </div>
+                                            <div class="p-4 bg-black/30 rounded-lg">
+                                                <h5 class="font-bold text-purple-400 mb-2">Tier 3: Professional</h5>
+                                                <p class="text-sm text-gray-400">Third-party auditor review, on-site inspections (for large campaigns), financial statement analysis</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="text-2xl font-bold mb-4">Evidence Requirements by Campaign Type</h4>
+                            <div class="space-y-4 mb-8">
+                                <div class="p-6 bg-white/5 rounded-lg border border-white/10">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="droplets" class="w-8 h-8 text-blue-400"></i>
+                                        <h5 class="text-xl font-bold">Water & Infrastructure Projects</h5>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-blue-400">Required Documentation:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• GPS-tagged photos (before/during/after)</li>
+                                                <li>• Engineering specifications and permits</li>
+                                                <li>• Water quality test results</li>
+                                                <li>• Flow rate measurements</li>
+                                                <li>• Beneficiary testimonials (video preferred)</li>
+                                                <li>• Itemized receipt for all materials</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-blue-400">Verification Timeline:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• Submit evidence within 7 days of completion</li>
+                                                <li>• Automated checks: 24-48 hours</li>
+                                                <li>• Community review period: 5 days</li>
+                                                <li>• Professional audit (if required): 7-10 days</li>
+                                                <li>• Total timeline: 14-21 days average</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-6 bg-white/5 rounded-lg border border-white/10">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="graduation-cap" class="w-8 h-8 text-yellow-400"></i>
+                                        <h5 class="text-xl font-bold">Education Programs</h5>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-yellow-400">Required Documentation:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• Student enrollment records (anonymized)</li>
+                                                <li>• Curriculum materials and schedules</li>
+                                                <li>• Teacher credentials and contracts</li>
+                                                <li>• Classroom photos and facility documentation</li>
+                                                <li>• Learning outcomes and assessments</li>
+                                                <li>• Supply purchase receipts</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-yellow-400">Verification Timeline:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• Submit evidence within 14 days</li>
+                                                <li>• Initial review: 3-5 days</li>
+                                                <li>• Community feedback: 7 days</li>
+                                                <li>• Educational specialist review: 5-7 days</li>
+                                                <li>• Total timeline: 15-25 days average</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-6 bg-white/5 rounded-lg border border-white/10">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="heart-pulse" class="w-8 h-8 text-red-400"></i>
+                                        <h5 class="text-xl font-bold">Healthcare Initiatives</h5>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-red-400">Required Documentation:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• Medical licenses and facility permits</li>
+                                                <li>• Patient statistics (HIPAA-compliant)</li>
+                                                <li>• Medical equipment receipts and photos</li>
+                                                <li>• Staff credentials and training records</li>
+                                                <li>• Health outcome metrics</li>
+                                                <li>• Pharmaceutical tracking logs</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h6 class="font-semibold mb-2 text-red-400">Verification Timeline:</h6>
+                                            <ul class="text-sm text-gray-400 space-y-1">
+                                                <li>• Submit evidence within 10 days</li>
+                                                <li>• HIPAA compliance check: 2-3 days</li>
+                                                <li>• Medical board review: 7-10 days</li>
+                                                <li>• Community validation: 5 days</li>
+                                                <li>• Total timeline: 14-21 days average</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box danger">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="alert-octagon" class="w-6 h-6 text-red-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold text-red-400 mb-2">Failure to Verify - Consequences</h5>
+                                        <p class="text-gray-300 text-sm mb-2">If a milestone cannot be verified within the specified timeframe, the following actions are triggered automatically:</p>
+                                        <ul class="text-gray-300 text-sm space-y-1">
+                                            <li>• Funds for that milestone are frozen</li>
+                                            <li>• Donors are notified and can request refunds</li>
+                                            <li>• Campaign is flagged for review</li>
+                                            <li>• Creator must submit explanation and remediation plan</li>
+                                            <li>• Repeated failures result in platform suspension</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Blockchain Integration -->
+                        <div class="tab-content" id="tab-blockchain">
+                            <h3 class="text-3xl font-bold mb-6">Blockchain & Smart Contract Architecture</h3>
+                            
+                            <p class="text-gray-400 text-lg mb-8">
+                                MilestoneGive is built on the Aptos blockchain, leveraging Move smart contracts for unprecedented security, transparency, and efficiency in charitable giving.
+                            </p>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="zap" class="w-8 h-8 text-yellow-400"></i>
+                                        <h4 class="text-xl font-bold">Why Aptos?</h4>
+                                    </div>
+                                    <ul class="space-y-3 text-gray-400">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Speed:</strong> Sub-second transaction finality ensures instant donation confirmations</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Low Cost:</strong> Transaction fees average $0.01-$0.05, keeping more money for causes</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Security:</strong> Move language prevents common smart contract vulnerabilities</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Scalability:</strong> 160,000+ TPS capacity handles massive donation volumes</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="shield" class="w-8 h-8 text-blue-400"></i>
+                                        <h4 class="text-xl font-bold">Smart Contract Features</h4>
+                                    </div>
+                                    <ul class="space-y-3 text-gray-400">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="lock" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Escrow System:</strong> Funds locked until milestones verified</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="lock" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Auto-Release:</strong> Verified milestones trigger automatic fund distribution</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="lock" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Refund Mechanism:</strong> Donors can reclaim unspent funds if campaign fails</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="lock" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                                            <span><strong class="text-white">Immutable Records:</strong> All transactions permanently recorded on-chain</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <h4 class="text-2xl font-bold mb-4">Transaction Flow Diagram</h4>
+                            <div class="code-block mb-8">
+                                <code>
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│              │     │              │     │              │     │              │
+│    DONOR     │────▶│   WALLET     │────▶│SMART CONTRACT│────▶│   CAMPAIGN   │
+│              │     │              │     │   (ESCROW)   │     │   CREATOR    │
+└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+       │                                           │                     │
+       │                                           │                     │
+       │              ┌──────────────┐             │                     │
+       │              │              │             │                     │
+       └─────────────▶│  BLOCKCHAIN  │◀────────────┴─────────────────────┘
+                      │   (APTOS)    │
+                      └──────────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │ PERMANENT RECORD │
+                    │  • Donor Address │
+                    │  • Amount        │
+                    │  • Timestamp     │
+                    │  • Campaign ID   │
+                    │  • Milestone #   │
+                    └──────────────────┘
+                                </code>
+                            </div>
+
+                            <h4 class="text-2xl font-bold mb-4">Understanding Gas Fees</h4>
+                            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                                <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                                    <h5 class="font-bold text-green-400 mb-2">Donation Transaction</h5>
+                                    <p class="text-3xl font-bold text-white mb-2">~$0.01</p>
+                                    <p class="text-sm text-gray-400">Standard APT transfer to campaign contract</p>
+                                </div>
+                                <div class="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                                    <h5 class="font-bold text-blue-400 mb-2">Milestone Verification</h5>
+                                    <p class="text-3xl font-bold text-white mb-2">~$0.03</p>
+                                    <p class="text-sm text-gray-400">Update contract state with verification data</p>
+                                </div>
+                                <div class="p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                                    <h5 class="font-bold text-purple-400 mb-2">Fund Release</h5>
+                                    <p class="text-3xl font-bold text-white mb-2">~$0.02</p>
+                                    <p class="text-sm text-gray-400">Automatic transfer from escrow to creator</p>
+                                </div>
+                            </div>
+
+                            <div class="info-box note mb-8">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="info" class="w-6 h-6 text-blue-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold text-blue-400 mb-2">Gas Fee Coverage</h5>
+                                        <p class="text-gray-300 text-sm">MilestoneGive covers all gas fees for milestone verification and fund release transactions. Donors only pay the minimal gas fee for their donation transaction (~$0.01), ensuring maximum impact of every contribution.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="text-2xl font-bold mb-4">Smart Contract Code Structure</h4>
+                            <div class="code-block mb-8">
+                                <code>
+module milestonegive::campaign {
+    use aptos_framework::coin;
+    use aptos_framework::timestamp;
+    use aptos_framework::event;
+    
+    struct Campaign has key {
+        creator: address,
+        title: vector&lt;u8&gt;,
+        total_goal: u64,
+        milestones: vector&lt;Milestone&gt;,
+        total_raised: u64,
+        donors: vector&lt;Donor&gt;,
+        status: u8, // 0=Active, 1=Completed, 2=Cancelled
+        created_at: u64,
+    }
+    
+    struct Milestone has store {
+        id: u64,
+        description: vector&lt;u8&gt;,
+        funding_required: u64,
+        verified: bool,
+        verification_data: vector&lt;u8&gt;,
+        completed_at: u64,
+    }
+    
+    struct Donor has store {
+        address: address,
+        amount: u64,
+        timestamp: u64,
+    }
+    
+    public entry fun donate(
+        donor: &signer,
+        campaign_address: address,
+        amount: u64
+    ) acquires Campaign {
+        // Validation and transfer logic
+        // Update campaign state
+        // Emit donation event
+    }
+    
+    public entry fun verify_milestone(
+        verifier: &signer,
+        campaign_address: address,
+        milestone_id: u64,
+        verification_data: vector&lt;u8&gt;
+    ) acquires Campaign {
+        // Check verifier authority
+        // Validate verification data
+        // Update milestone status
+        // Trigger fund release
+        // Emit verification event
+    }
+    
+    public entry fun release_funds(
+        campaign_address: address,
+        milestone_id: u64
+    ) acquires Campaign {
+        // Check milestone verification
+        // Calculate release amount
+        // Transfer to creator
+        // Update campaign state
+        // Emit release event
+    }
+}
+                                </code>
+                            </div>
+
+                            <div class="glass-section p-6 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border-cyan-500/30">
+                                <h5 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                    <i data-lucide="book-open" class="w-6 h-6 text-cyan-400"></i>
+                                    For Developers: Integration Guide
+                                </h5>
+                                <p class="text-gray-300 mb-4">
+                                    Want to integrate MilestoneGive into your application? Our comprehensive API documentation provides everything you need to build on top of our platform.
+                                </p>
+                                <div class="flex flex-wrap gap-3">
+                                    <a href="#" class="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-cyan-400 hover:bg-cyan-500/30 transition-all text-sm font-semibold">
+                                        <i data-lucide="book" class="w-4 h-4 inline mr-2"></i>
+                                        API Documentation
+                                    </a>
+                                    <a href="#" class="px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/30 transition-all text-sm font-semibold">
+                                        <i data-lucide="github" class="w-4 h-4 inline mr-2"></i>
+                                        GitHub Repository
+                                    </a>
+                                    <a href="#" class="px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-lg text-purple-400 hover:bg-purple-500/30 transition-all text-sm font-semibold">
+                                        <i data-lucide="code-2" class="w-4 h-4 inline mr-2"></i>
+                                        SDK & Libraries
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Advanced Features -->
+                        <div class="tab-content" id="tab-advanced">
+                            <h3 class="text-3xl font-bold mb-6">Advanced Platform Features</h3>
+                            
+                            <p class="text-gray-400 text-lg mb-8">
+                                Power users can leverage advanced features to maximize their impact, gain deeper insights, and engage with the community on a more sophisticated level.
+                            </p>
+
+                            <div class="feature-grid mb-8">
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="repeat" class="w-8 h-8 text-green-400"></i>
+                                        <h4 class="text-xl font-bold">Recurring Donations</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Set up automated monthly donations to your favorite causes. Smart contracts handle the scheduling, ensuring consistent support without manual intervention.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Flexibility</span>
+                                            <span class="text-green-400 font-mono">Cancel Anytime</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Frequency</span>
+                                            <span class="text-blue-400 font-mono">Weekly, Monthly, Quarterly</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Minimum</span>
+                                            <span class="text-purple-400 font-mono">10 APT/month</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="users" class="w-8 h-8 text-blue-400"></i>
+                                        <h4 class="text-xl font-bold">Donor Circles</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Create or join giving circles where groups pool resources and collectively decide which campaigns to support. Democratic voting ensures everyone has a say.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Circle Size</span>
+                                            <span class="text-green-400 font-mono">5-50 Members</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Voting System</span>
+                                            <span class="text-blue-400 font-mono">Quadratic/Simple</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Governance</span>
+                                            <span class="text-purple-400 font-mono">On-Chain</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="award" class="w-8 h-8 text-purple-400"></i>
+                                        <h4 class="text-xl font-bold">Impact NFTs</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Receive unique, non-transferable NFTs commemorating your contributions. Each NFT contains verifiable proof of your donation and its impact on-chain.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Rarity</span>
+                                            <span class="text-green-400 font-mono">Based on Amount</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Utility</span>
+                                            <span class="text-blue-400 font-mono">Governance Rights</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Transferable</span>
+                                            <span class="text-purple-400 font-mono">Soulbound</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="line-chart" class="w-8 h-8 text-cyan-400"></i>
+                                        <h4 class="text-xl font-bold">Analytics Dashboard</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Access comprehensive analytics on your giving patterns, impact metrics, and portfolio performance. Export data for tax reporting and personal records.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Metrics</span>
+                                            <span class="text-green-400 font-mono">50+ Data Points</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Export</span>
+                                            <span class="text-blue-400 font-mono">CSV, PDF, JSON</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Tax Reports</span>
+                                            <span class="text-purple-400 font-mono">Auto-Generated</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="bell" class="w-8 h-8 text-orange-400"></i>
+                                        <h4 class="text-xl font-bold">Custom Alerts</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Configure personalized notifications for milestone completions, new campaigns in your interest areas, matching opportunities, and more.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Channels</span>
+                                            <span class="text-green-400 font-mono">Email, SMS, Push</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Frequency</span>
+                                            <span class="text-blue-400 font-mono">Real-time/Daily</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Filters</span>
+                                            <span class="text-purple-400 font-mono">Highly Customizable</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass-section p-6">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="git-branch" class="w-8 h-8 text-pink-400"></i>
+                                        <h4 class="text-xl font-bold">Matching Campaigns</h4>
+                                    </div>
+                                    <p class="text-gray-400 mb-4">
+                                        Amplify your impact by creating matching funds. For every dollar donated by others, you contribute a matching amount up to your specified limit.
+                                    </p>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Ratio</span>
+                                            <span class="text-green-400 font-mono">1:1, 2:1, or Custom</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Cap</span>
+                                            <span class="text-blue-400 font-mono">Your Choice</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-500">Duration</span>
+                                            <span class="text-purple-400 font-mono">Flexible Period</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="text-2xl font-bold mb-6">Power User Workflows</h4>
+                            
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="advanced-1">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="layers" class="w-6 h-6 text-cyan-400"></i>
+                                        <h5 class="text-lg font-bold">Portfolio Diversification Strategy</h5>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-4">
+                                            Strategic donors often diversify their giving across multiple impact areas and risk profiles. Here's a proven allocation strategy:
+                                        </p>
+                                        <div class="grid md:grid-cols-3 gap-4">
+                                            <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                                                <h6 class="font-bold text-green-400 mb-2">Core Portfolio (60%)</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Established campaigns with proven track records and multiple completed milestones.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Low risk, steady impact</li>
+                                                    <li>• 3+ verified milestones</li>
+                                                    <li>• Large beneficiary base</li>
+                                                    <li>• Professional management</li>
+                                                </ul>
+                                            </div>
+                                            <div class="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                                                <h6 class="font-bold text-blue-400 mb-2">Growth Portfolio (30%)</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Promising new campaigns with innovative approaches and strong verification.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Medium risk, high potential</li>
+                                                    <li>• 1-2 milestones completed</li>
+                                                    <li>• Novel solutions</li>
+                                                    <li>• Strong team credentials</li>
+                                                </ul>
+                                            </div>
+                                            <div class="p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                                                <h6 class="font-bold text-purple-400 mb-2">Venture Portfolio (10%)</h6>
+                                                <p class="text-sm text-gray-400 mb-3">Early-stage, high-impact campaigns addressing urgent or overlooked needs.</p>
+                                                <ul class="text-xs text-gray-500 space-y-1">
+                                                    <li>• Higher risk, transformative potential</li>
+                                                    <li>• New campaigns</li>
+                                                    <li>• Urgent causes</li>
+                                                    <li>• Smaller organizations</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="advanced-2">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="bot" class="w-6 h-6 text-blue-400"></i>
+                                        <h5 class="text-lg font-bold">Automated Giving with Smart Rules</h5>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-4">
+                                            Set up intelligent automation rules to streamline your charitable giving based on specific triggers and conditions:
+                                        </p>
+                                        <div class="code-block">
+                                            <code>
+// Example: Auto-donate when campaigns reach funding thresholds
+IF campaign.category == "Water Access"
+AND campaign.progress >= 75%
+AND campaign.milestones_verified >= 2
+AND campaign.location in ["Sub-Saharan Africa", "Southeast Asia"]
+THEN donate(100 APT)
+
+// Example: Match small donors to encourage participation
+IF new_donation.amount < 50 APT
+AND campaign.id in my_watchlist
+AND time_remaining < 7 days
+THEN match_donation(ratio=1:1, max=500 APT)
+
+// Example: Support underfunded urgent causes
+IF campaign.created_date within last 48 hours
+AND campaign.category == "Disaster Relief"
+AND campaign.verification_status == "Verified"
+THEN donate(200 APT) + notify_donor_circle()
+                                            </code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-accordion="advanced-3">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="webhook" class="w-6 h-6 text-purple-400"></i>
+                                        <h5 class="text-lg font-bold">API Integration & Webhooks</h5>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-inner">
+                                        <p class="text-gray-400 mb-4">
+                                            Integrate MilestoneGive into your existing systems using our comprehensive REST API and webhook system:
+                                        </p>
+                                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                            <div class="p-4 bg-white/5 rounded-lg">
+                                                <h6 class="font-bold mb-2 flex items-center gap-2">
+                                                    <i data-lucide="send" class="w-5 h-5 text-green-400"></i>
+                                                    Available Webhooks
+                                                </h6>
+                                                <ul class="text-sm text-gray-400 space-y-1">
+                                                    <li>• campaign.created</li>
+                                                    <li>• donation.received</li>
+                                                    <li>• milestone.verified</li>
+                                                    <li>• funds.released</li>
+                                                    <li>• campaign.completed</li>
+                                                    <li>• verification.failed</li>
+                                                </ul>
+                                            </div>
+                                            <div class="p-4 bg-white/5 rounded-lg">
+                                                <h6 class="font-bold mb-2 flex items-center gap-2">
+                                                    <i data-lucide="key" class="w-5 h-5 text-blue-400"></i>
+                                                    API Capabilities
+                                                </h6>
+                                                <ul class="text-sm text-gray-400 space-y-1">
+                                                    <li>• Create/manage campaigns</li>
+                                                    <li>• Process donations programmatically</li>
+                                                    <li>• Query campaign data</li>
+                                                    <li>• Fetch transaction history</li>
+                                                    <li>• Generate impact reports</li>
+                                                    <li>• Manage user preferences</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="code-block">
+                                            <code>
+// Example: Subscribe to milestone verification webhook
+POST https://api.milestonegive.io/webhooks
+{
+  "url": "https://yourserver.com/webhook",
+  "events": ["milestone.verified"],
+  "secret": "your_webhook_secret_key"
+}
+
+// Example: Fetch campaign data via API
+GET https://api.milestonegive.io/campaigns/abc123
+Headers: {
+  "Authorization": "Bearer YOUR_API_KEY",
+  "Content-Type": "application/json"
+}
+                                            </code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
+                        <p class="text-gray-400 text-lg mono">Quick answers to common questions</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="accordion-item" data-aos="fade-up">
+                            <div class="accordion-header" data-accordion="faq-1">
+                                <h4 class="text-lg font-bold">How do I know my donation is being used properly?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400">
+                                        Every donation on MilestoneGive is secured in a smart contract escrow. Funds are only released when specific milestones are verified through our multi-tier verification system, which includes photo evidence, community review, and third-party audits for larger campaigns. You can track exactly how your donation is being used in real-time through your donor dashboard.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="100">
+                            <div class="accordion-header" data-accordion="faq-2">
+                                <h4 class="text-lg font-bold">What happens if a campaign doesn't reach its goal?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400">
+                                        MilestoneGive uses a flexible funding model. Campaigns can proceed with partial funding if they have enough to complete at least one milestone. If a campaign fails to achieve any milestones or is cancelled, donors can claim refunds through the smart contract. Unspent funds are always returnable to donors.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="200">
+                            <div class="accordion-header" data-accordion="faq-3">
+                                <h4 class="text-lg font-bold">Can I get a tax deduction for my cryptocurrency donation?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400">
+                                        Tax treatment of cryptocurrency donations varies by jurisdiction. In many countries, donating appreciated cryptocurrency can provide tax advantages. We provide detailed transaction records and work with verified 501(c)(3) organizations (US) and equivalent registered charities globally. Consult with a tax professional in your area for specific guidance. Our platform automatically generates donation receipts with all necessary information for tax reporting.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="300">
+                            <div class="accordion-header" data-accordion="faq-4">
+                                <h4 class="text-lg font-bold">How long does the verification process take?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400 mb-3">
+                                        Verification timelines vary based on campaign type and complexity:
+                                    </p>
+                                    <ul class="text-gray-400 space-y-2">
+                                        <li>• <strong class="text-white">Small milestones (&lt;$5,000):</strong> 3-7 days</li>
+                                        <li>• <strong class="text-white">Medium milestones ($5,000-$25,000):</strong> 7-14 days</li>
+                                        <li>• <strong class="text-white">Large milestones (&gt;$25,000):</strong> 14-21 days (includes professional audit)</li>
+                                    </ul>
+                                    <p class="text-gray-400 mt-3">
+                                        Automated checks happen within 24 hours, but community review and professional audits add time to ensure thoroughness.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="400">
+                            <div class="accordion-header" data-accordion="faq-5">
+                                <h4 class="text-lg font-bold">What are the platform fees?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400 mb-3">
+                                        MilestoneGive operates on a transparent fee structure:
+                                    </p>
+                                    <ul class="text-gray-400 space-y-2">
+                                        <li>• <strong class="text-white">Platform Fee:</strong> 5% of successfully distributed funds</li>
+                                        <li>• <strong class="text-white">Payment Processing:</strong> Covered by platform (no additional charge to donors)</li>
+                                        <li>• <strong class="text-white">Gas Fees:</strong> ~$0.01 per donation (paid by donor), all other blockchain fees covered by platform</li>
+                                        <li>• <strong class="text-white">Verification Costs:</strong> Included in platform fee</li>
+                                    </ul>
+                                    <p class="text-gray-400 mt-3">
+                                        This means 95% of every successfully distributed donation goes directly to the campaign. Fees are only charged when funds are released to campaign creators, not when donations are made.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="500">
+                            <div class="accordion-header" data-accordion="faq-6">
+                                <h4 class="text-lg font-bold">Is my personal information kept private?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400">
+                                        Yes. While donations are publicly visible on the blockchain (showing wallet addresses and amounts), your personal identity is not connected to your wallet address unless you choose to share it. Campaign creators and other donors only see your
+                                        wallet address, not your name or personal details. You have full control over your privacy settings and can choose to donate anonymously or publicly display your support. We comply with GDPR, CCPA, and other privacy regulations globally.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="600">
+                            <div class="accordion-header" data-accordion="faq-7">
+                                <h4 class="text-lg font-bold">Can I cancel a donation after it's been made?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400 mb-3">
+                                        Once a donation transaction is confirmed on the blockchain, it cannot be reversed. However, you have recourse in specific situations:
+                                    </p>
+                                    <ul class="text-gray-400 space-y-2">
+                                        <li>• <strong class="text-white">Before Milestone Completion:</strong> If funds haven't been released to the campaign creator, you can request a refund if the campaign is cancelled or fails verification</li>
+                                        <li>• <strong class="text-white">Fraud Detection:</strong> If a campaign is found to be fraudulent, all donors are automatically eligible for refunds</li>
+                                        <li>• <strong class="text-white">Campaign Cancellation:</strong> If a creator cancels their campaign, all unspent funds are returned to donors</li>
+                                        <li>• <strong class="text-white">Goal Not Met:</strong> For all-or-nothing campaigns that don't reach their target, full refunds are available</li>
+                                    </ul>
+                                    <p class="text-gray-400 mt-3">
+                                        This is why our milestone-based system is so important - it protects your donation until verified progress is demonstrated.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-aos="fade-up" data-aos-delay="700">
+                            <div class="accordion-header" data-accordion="faq-8">
+                                <h4 class="text-lg font-bold">What cryptocurrencies can I use to donate?</h4>
+                                <i data-lucide="chevron-down" class="w-5 h-5 accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="accordion-inner">
+                                    <p class="text-gray-400 mb-3">
+                                        Currently, MilestoneGive accepts:
+                                    </p>
+                                    <ul class="text-gray-400 space-y-2">
+                                        <li>• <strong class="text-white">APT (Aptos):</strong> Primary currency, lowest fees</li>
+                                        <li>• <strong class="text-white">USDC on Aptos:</strong> Stablecoin option for price stability</li>
+                                        <li>• <strong class="text-white">USDT on Aptos:</strong> Alternative stablecoin</li>
+                                    </ul>
+                                    <p class="text-gray-400 mt-3">
+                                        We're built on Aptos blockchain to ensure fast, low-cost transactions. We plan to add cross-chain bridging capabilities in the future to accept donations from other major blockchains. All donations are automatically converted to the campaign creator's preferred currency at the time of milestone fund release.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Support & Community Section -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Need More Help?</h2>
+                        <p class="text-gray-400 text-lg mono">Our community and support team are here for you</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="glass-section p-6 text-center" data-aos="fade-up">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="message-circle" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-2">Live Chat Support</h4>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Get instant answers from our support team. Available 24/7.
+                            </p>
+                            <button class="text-blue-400 hover:text-blue-300 font-semibold text-sm">
+                                Start Chat →
+                            </button>
+                        </div>
+
+                        <div class="glass-section p-6 text-center" data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-2">Community Forum</h4>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Connect with other donors and campaign creators.
+                            </p>
+                            <button class="text-purple-400 hover:text-purple-300 font-semibold text-sm">
+                                Join Forum →
+                            </button>
+                        </div>
+
+                        <div class="glass-section p-6 text-center" data-aos="fade-up" data-aos-delay="200">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="book-open" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-2">Help Center</h4>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Browse our comprehensive knowledge base and guides.
+                            </p>
+                            <button class="text-green-400 hover:text-green-300 font-semibold text-sm">
+                                View Docs →
+                            </button>
+                        </div>
+
+                        <div class="glass-section p-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="video" class="w-8 h-8 text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-2">Video Tutorials</h4>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Watch step-by-step video guides for every feature.
+                            </p>
+                            <button class="text-orange-400 hover:text-orange-300 font-semibold text-sm">
+                                Watch Now →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="glass-section p-8 mt-12 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="400">
+                        <h3 class="text-2xl font-bold mb-6 text-center">Still Have Questions?</h3>
+                        <form class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Your Name</label>
+                                    <input type="text" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-green-500 transition-colors" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Email Address</label>
+                                    <input type="email" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-green-500 transition-colors" placeholder="john@example.com">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Subject</label>
+                                <input type="text" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-green-500 transition-colors" placeholder="How can we help?">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Message</label>
+                                <textarea rows="5" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-green-500 transition-colors resize-none" placeholder="Tell us more about your question..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full primary-btn justify-center py-4 text-lg">
+                                <i data-lucide="send" class="w-5 h-5"></i>
+                                <span>Send Message</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Best Practices Section -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-12" data-aos="fade-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Best Practices & Tips</h2>
+                        <p class="text-gray-400 text-lg mono">Maximize your impact and success on MilestoneGive</p>
+                    </div>
+
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- For Donors -->
+                        <div class="glass-section p-8" data-aos="fade-up">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                                    <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">For Donors</h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">1</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Research Before Donating</h5>
+                                        <p class="text-sm text-gray-400">Read campaign details thoroughly, check milestone definitions, and review the team's credentials. Look for campaigns with completed milestones as proof of capability.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">2</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Start Small, Scale Up</h5>
+                                        <p class="text-sm text-gray-400">Make smaller initial donations to test campaigns and creators. Increase contributions as you gain confidence in their execution and transparency.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">3</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Diversify Your Giving</h5>
+                                        <p class="text-sm text-gray-400">Spread donations across multiple campaigns and impact areas. This reduces risk and creates broader positive impact.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">4</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Engage with Updates</h5>
+                                        <p class="text-sm text-gray-400">Actively review milestone updates, provide feedback, and participate in community discussions. Your engagement helps maintain accountability.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">5</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Set Up Recurring Donations</h5>
+                                        <p class="text-sm text-gray-400">For causes you're passionate about, consider recurring donations. Predictable funding helps campaigns plan more effectively.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-green-400 font-bold">6</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Track Your Impact</h5>
+                                        <p class="text-sm text-gray-400">Use the analytics dashboard to monitor your giving patterns, total impact, and portfolio performance. Adjust strategy based on results.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- For Campaign Creators -->
+                        <div class="glass-section p-8" data-aos="fade-up" data-aos-delay="100">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                                    <i data-lucide="rocket" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">For Campaign Creators</h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">1</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Define Crystal-Clear Milestones</h5>
+                                        <p class="text-sm text-gray-400">Each milestone should be specific, measurable, and achievable. Vague milestones lead to verification delays and donor skepticism.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">2</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Over-Communicate Progress</h5>
+                                        <p class="text-sm text-gray-400">Share frequent updates (weekly recommended) even if there's no major news. Transparency builds trust and keeps donors engaged.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">3</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Document Everything</h5>
+                                        <p class="text-sm text-gray-400">Take photos and videos at every stage. GPS-tagged evidence, receipts, and third-party reports make verification smooth and fast.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">4</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Build Your Network First</h5>
+                                        <p class="text-sm text-gray-400">Secure commitments from your immediate network before launching. Early momentum attracts strangers to your campaign.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">5</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Respond to Comments Quickly</h5>
+                                        <p class="text-sm text-gray-400">Answer donor questions within 24 hours. Active engagement shows commitment and builds community around your cause.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <span class="text-blue-400 font-bold">6</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold mb-1">Plan for Contingencies</h5>
+                                        <p class="text-sm text-gray-400">Build 15-20% buffer into milestone budgets for unexpected costs. Explain your contingency plans in campaign details.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security & Safety Section -->
+            <section class="px-6 py-16 relative">
+                <div class="max-w-5xl mx-auto">
+                    <div class="glass-section p-8" data-aos="fade-up" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+                        <div class="flex items-start gap-4 mb-6">
+                            <i data-lucide="shield-alert" class="w-12 h-12 text-red-400 flex-shrink-0"></i>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Security Best Practices</h3>
+                                <p class="text-gray-300">
+                                    Protect yourself and your donations by following these essential security guidelines.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="key" class="w-5 h-5 text-red-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-red-400">Never Share Private Keys</h5>
+                                        <p class="text-sm text-gray-400">MilestoneGive will NEVER ask for your wallet's private key or seed phrase. Anyone requesting this information is attempting fraud.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="link-2" class="w-5 h-5 text-orange-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-orange-400">Verify URLs Carefully</h5>
+                                        <p class="text-sm text-gray-400">Always check you're on the official MilestoneGive domain. Bookmark our site and avoid clicking links in unsolicited messages.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="shield-check" class="w-5 h-5 text-yellow-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-yellow-400">Enable 2FA</h5>
+                                        <p class="text-sm text-gray-400">Activate two-factor authentication on your wallet and email account for an extra layer of security.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="eye" class="w-5 h-5 text-green-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-green-400">Review Transactions</h5>
+                                        <p class="text-sm text-gray-400">Double-check recipient addresses and amounts before confirming any transaction in your wallet.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="alert-triangle" class="w-5 h-5 text-blue-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-blue-400">Report Suspicious Activity</h5>
+                                        <p class="text-sm text-gray-400">If you notice anything unusual about a campaign or communication, report it immediately to our security team.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-4 bg-black/30 rounded-lg">
+                                    <i data-lucide="smartphone" class="w-5 h-5 text-purple-400 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h5 class="font-bold mb-1 text-purple-400">Secure Your Devices</h5>
+                                        <p class="text-sm text-gray-400">Keep your devices updated, use strong passwords, and avoid accessing your wallet on public Wi-Fi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="megaphone" class="w-5 h-5 text-red-400 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <h5 class="font-bold text-red-400 mb-1">Common Scam Alert</h5>
+                                    <p class="text-sm text-gray-300">Be wary of campaigns promising unrealistic results, requesting donations outside the platform, or creating urgency through fear tactics. Legitimate campaigns are patient and transparent.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="px-6 py-20 relative">
+                <div class="max-w-4xl mx-auto text-center">
+                    <div class="glass-section p-12" data-aos="fade-up" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                            Ready to Make a
+                            <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Difference?</span>
+                        </h2>
+                        <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+                            Join thousands of donors and campaign creators building a more transparent and accountable charitable ecosystem on the blockchain.
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <button class="primary-btn px-8 py-4 text-lg">
+                                <i data-lucide="heart" class="w-5 h-5"></i>
+                                <a href="/All-cause.html"> <span>Browse Campaigns</span></a>
+                            </button>
+                            <button class="px-8 py-4 text-lg bg-white/5 border border-white/20 rounded-lg font-semibold hover:bg-white/10 transition-all">
+                                <i data-lucide="plus-circle" class="w-5 h-5 inline mr-2"></i>
+                                <span>Create Campaign</span>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-12 pt-8 border-t border-white/10">
+                            <div class="grid grid-cols-3 gap-8">
+                                <div>
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">$24M+</div>
+                                    <div class="text-sm text-gray-400 mono">Total Donated</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">1,247</div>
+                                    <div class="text-sm text-gray-400 mono">Active Campaigns</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">98.4%</div>
+                                    <div class="text-sm text-gray-400 mono">Verification Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+     <!-- Footer -->
+  <footer class="relative z-10 bg-gradient-to-b from-black/80 to-black mt-12 py-16 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Main Footer Content -->
+      <div class="grid md:grid-cols-4 gap-12 mb-12">
+        
+        <!-- Brand Column -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-white">MilestoneGive</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            A Web3-powered platform connecting donors to verified projects worldwide. Transparency and impact are our core values.
+          </p>
+          <div class="flex gap-3 mt-4">
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-green-500/20 hover:border-green-400/50 transition-all duration-300 group">
+              <i data-lucide="twitter" class="w-5 h-5 text-gray-400 group-hover:text-green-400 transition-colors"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-400/50 transition-all duration-300 group">
+              <i data-lucide="linkedin" class="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-purple-500/20 hover:border-purple-400/50 transition-all duration-300 group">
+              <i data-lucide="github" class="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Platform Links -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="200">
+          <h4 class="text-white font-bold text-lg mb-2">Platform</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="/All-cause.html" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="search" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Browse Causes</span>
+              </a>
+            </li>
+            <li>
+              <a href="#create" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="plus-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Create Campaign</span>
+              </a>
+            </li>
+            <li>
+              <a href="/how it works.HTML" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="help-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>How It Works</span>
+              </a>
+            </li>
+            <li>
+              <a href="#impact-calculator" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="calculator" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Impact Calculator</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="300">
+          <h4 class="text-white font-bold text-lg mb-2">Resources</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="#docs" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="book-open" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Documentation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#faq" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="message-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>FAQ</span>
+              </a>
+            </li>
+            <li>
+              <a href="#blog" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="newspaper" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Blog</span>
+              </a>
+            </li>
+            <li>
+              <a href="#whitepaper" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="file-text" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Whitepaper</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Legal & Support -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="400">
+          <h4 class="text-white font-bold text-lg mb-2">Legal & Support</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="#privacy" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="shield" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Privacy Policy</span>
+              </a>
+            </li>
+            <li>
+              <a href="#terms" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="file-check" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Terms of Service</span>
+              </a>
+            </li>
+            <li>
+              <a href="#contact" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="mail" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Contact Us</span>
+              </a>
+            </li>
+            <li>
+              <a href="#support" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="headphones" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Support Center</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="fade-up" data-aos-delay="500">
+        <p class="text-gray-500 text-sm">
+          © 2025 MilestoneGive. All rights reserved. Built by codr!.
+        </p>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="#status" class="text-gray-400 hover:text-green-400 transition-colors duration-300 flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <span>All Systems Operational</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+    </div>
+    <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Initialize AOS (Animate On Scroll)
+    AOS.init({
+        duration: 800,
+        easing: 'ease-out',
+        once: true,
+        offset: 100
+    });
+
+    // Particle Canvas Animation
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const particleCount = 100;
+    
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.radius = Math.random() * 2;
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
+            ctx.fill();
+        }
+    }
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link, .mobile-dropdown-item').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    });
+
+    // Mobile Dropdown Toggle
+    const mobileResourcesToggle = document.getElementById('mobile-resources-toggle');
+    const mobileResourcesDropdown = document.getElementById('mobile-resources-dropdown');
+    const mobileDropdownIcon = document.getElementById('mobile-dropdown-icon');
+    
+    mobileResourcesToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileResourcesDropdown.classList.toggle('active');
+        mobileDropdownIcon.style.transform = mobileResourcesDropdown.classList.contains('active') 
+            ? 'rotate(180deg)' 
+            : 'rotate(0deg)';
+    });
+
+    // Tab Navigation
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            document.getElementById(`tab-${targetTab}`).classList.add('active');
+        });
+    });
+
+    // Accordion Functionality
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const accordionId = header.getAttribute('data-accordion');
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.accordion-icon');
+            
+            // Toggle active state
+            content.classList.toggle('active');
+            
+            // Rotate icon
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+
+    // Smooth Scroll for Navigation Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && document.querySelector(href)) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                const offset = 100;
+                const targetPosition = target.offsetTop - offset;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Connect Wallet Button
+    document.querySelectorAll('.primary-btn').forEach(btn => {
+        if (btn.textContent.includes('Connect Wallet')) {
+            btn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Connect Your Wallet',
+                    html: `
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Petra Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Most popular Aptos wallet</div>
+                            </button>
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Martian Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Multi-chain support</div>
+                            </button>
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Pontem Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Built for Aptos DeFi</div>
+                            </button>
+                        </div>
+                    `,
+                    background: '#0a0a0a',
+                    color: '#ffffff',
+                    showConfirmButton: false,
+                    showCloseButton: true
+                });
+            });
+        }
+    });
+
+    // Form Submission
+    document.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Message Sent!',
+            text: 'Thank you for contacting us. We\'ll get back to you within 24 hours.',
+            icon: 'success',
+            background: '#0a0a0a',
+            color: '#ffffff',
+            confirmButtonColor: '#22c55e'
+        });
+        
+        e.target.reset();
+    });
+
+    // Reinitialize Lucide icons after dynamic content loads
+    setTimeout(() => {
+        lucide.createIcons();
+    }, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Causes - MilestoneGive</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .glass-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #22c55e, #3b82f6, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .filter-btn.active {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .filter-btn:hover {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .wallet-modal-popup {
+            border-radius: 24px !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .wallet-option:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(34, 197, 94, 0.3) !important;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        input, textarea, select {
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #22c55e !important;
+        }
+          /* Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Animated gradient background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 20%, rgba(34, 197, 94, 0.15), transparent 50%),
+                        radial-gradient(ellipse at 80% 60%, rgba(59, 130, 246, 0.1), transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(147, 51, 234, 0.1), transparent 50%);
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        /* Content layer */
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Enhanced Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card-hover:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(34, 197, 94, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(34, 197, 94, 0.2);
+        }
+        
+        /* Glow button */
+        .glow-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 12px 32px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+        
+        .glow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .glow-btn:hover::before {
+            left: 100%;
+        }
+        
+        .glow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5),
+                        0 0 60px rgba(34, 197, 94, 0.3);
+        }
+        
+        .glow-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Badge button */
+        .badge-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .badge-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(34, 197, 94, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Nav link */
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 16px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        /* Dropdown indicator */
+        .dropdown-indicator {
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-link:hover .dropdown-indicator {
+            transform: rotate(180deg);
+        }
+        
+        /* Primary button with icon */
+        .primary-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .primary-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .primary-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+        
+        .primary-btn span {
+            position: relative;
+            z-index: 1;
+        }
+         
+    </style>
+</head>
+ <!-- Particle Canvas -->
+  <canvas id="particleCanvas"></canvas>
+  
+  <!-- Animated Background -->
+  <div class="gradient-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Content Wrapper -->
+  <div class="content">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full top-0 z-50 glass-card">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-bold mono">MilestoneGive</span>
+            </div>
+
+            <!-- Nav Links -->
+        <div class="hidden md:flex items-center gap-8">
+                <a href="All-cause.html" class="nav-link">Browse Causes</a>
+                <a href="how it works.html" class="nav-link">How It Works</a>
+                <a href="#impact" class="nav-link">Impact Stories</a>
+                
+                <!-- Resources Dropdown -->
+                <div class="relative group">
+                    <button class="nav-link flex items-center gap-1">
+                        Resources
+                        <i data-lucide="chevron-down" class="w-4 h-4 dropdown-indicator group-hover:rotate-180 transition-transform duration-300"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="absolute top-full left-0 mt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div class="bg-black/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="py-2">
+                                <a href="whitepaper.html" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="book-open" class="w-5 h-5 text-green-400"></i>
+                                    <span class="text-white text-sm">Documentation</span>
+                                </a>
+                                
+                                <a href="whitepaper.html" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+                                    <span class="text-white text-sm">Whitepaper</span>
+                                </a>
+                                
+                                <a href="#blog" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="newspaper" class="w-5 h-5 text-purple-400"></i>
+                                    <span class="text-white text-sm">Blog</span>
+                                </a>
+                                
+                                <a href="#faq" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="help-circle" class="w-5 h-5 text-yellow-400"></i>
+                                    <span class="text-white text-sm">FAQ</span>
+                                </a>
+                                
+                                <a href="#api" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="code-2" class="w-5 h-5 text-cyan-400"></i>
+                                    <span class="text-white text-sm">API Reference</span>
+                                </a>
+                                
+                                <div class="border-t border-white/10 my-2"></div>
+                                
+                                <a href="#community" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="users" class="w-5 h-5 text-pink-400"></i>
+                                    <span class="text-white text-sm">Community</span>
+                                </a>
+                                
+                                <a href="#support" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="headphones" class="w-5 h-5 text-orange-400"></i>
+                                    <span class="text-white text-sm">Support Center</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Social + Wallet Button -->
+            <div class="flex items-center gap-4">
+                <a href="#" class="social-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+
+                <a href="#" class="social-icon">
+                    <i data-lucide="github" class="w-5 h-5"></i>
+                </a>
+
+                <button class="primary-btn">
+                    <span>Connect Wallet</span>
+                </button>
+            </div>
+        </div>
+    </nav></div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-7xl mx-auto text-center" data-aos="fade-up">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                Explore <span class="gradient-text">Active Causes</span>
+            </h1>
+            <p class="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
+                Browse verified campaigns making real impact through milestone-based funding
+            </p>
+            
+            <!-- Search & Filter Bar -->
+            <div class="max-w-4xl mx-auto mb-8">
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Search -->
+                        <div class="flex-1 relative">
+                            <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                id="search-input"
+                                placeholder="Search causes..." 
+                                class="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400"
+                            />
+                        </div>
+                        
+                        <!-- Create Cause Button -->
+                        <button class="primary-btn" id="create-cause-btn">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                            <span>Create Cause</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Tags -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12" data-aos="fade-up" data-aos-delay="100">
+                <button class="filter-btn active" data-category="all">
+                    <i data-lucide="grid-3x3" class="w-4 h-4 inline mr-2"></i>
+                    All Categories
+                </button>
+                <button class="filter-btn" data-category="water">
+                    <i data-lucide="droplets" class="w-4 h-4 inline mr-2"></i>
+                    Water & Sanitation
+                </button>
+                <button class="filter-btn" data-category="education">
+                    <i data-lucide="book-open" class="w-4 h-4 inline mr-2"></i>
+                    Education
+                </button>
+                <button class="filter-btn" data-category="healthcare">
+                    <i data-lucide="heart-pulse" class="w-4 h-4 inline mr-2"></i>
+                    Healthcare
+                </button>
+                <button class="filter-btn" data-category="environment">
+                    <i data-lucide="sprout" class="w-4 h-4 inline mr-2"></i>
+                    Environment
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Causes Grid -->
+    <section class="px-6 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="causes-grid">
+                <!-- Cause cards will be dynamically generated -->
+            </div>
+            
+            <!-- Load More -->
+            <div class="text-center mt-12" data-aos="fade-up">
+                <button class="filter-btn px-8 py-4 text-lg" id="load-more-btn">
+                    <i data-lucide="refresh-cw" class="w-5 h-5 inline mr-2"></i>
+                    Load More Causes
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+         // Particle System
+    const particleCanvas = document.getElementById('particleCanvas');
+    const particleCtx = particleCanvas.getContext('2d');
+    
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    
+    const particles = [];
+    const particleCount = 80;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * particleCanvas.width;
+        this.y = Math.random() * particleCanvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.2;
+      }
+      
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x > particleCanvas.width) this.x = 0;
+        if (this.x < 0) this.x = particleCanvas.width;
+        if (this.y > particleCanvas.height) this.y = 0;
+        if (this.y < 0) this.y = particleCanvas.height;
+      }
+      
+      draw() {
+        particleCtx.fillStyle = `rgba(34, 197, 94, ${this.opacity})`;
+        particleCtx.beginPath();
+        particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        particleCtx.fill();
+      }
+    }
+    
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+    
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 120) {
+            particleCtx.strokeStyle = `rgba(34, 197, 94, ${0.2 * (1 - distance / 120)})`;
+            particleCtx.lineWidth = 0.5;
+            particleCtx.beginPath();
+            particleCtx.moveTo(particles[i].x, particles[i].y);
+            particleCtx.lineTo(particles[j].x, particles[j].y);
+            particleCtx.stroke();
+          }
+        }
+      }
+    }
+    
+    function animateParticles() {
+      particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+      
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
+    
+    initParticles();
+    animateParticles();
+    
+    window.addEventListener('resize', () => {
+      particleCanvas.width = window.innerWidth;
+      particleCanvas.height = window.innerHeight;
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Parallax background
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+          const gradient = document.querySelector('.gradient-bg');
+          if (gradient) {
+            gradient.style.transform = `translateY(${scrolled * 0.5}px)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+        // ==================== CONFIGURATION ====================
+        
+        const APTOS_CONFIG = {
+            NETWORK: 'testnet',
+            NODE_URL: 'https://fullnode.testnet.aptoslabs.com/v1',
+            RECIPIENT_ADDRESS: '0x1' // Replace with your actual recipient address
+        };
+
+        const APTOS_WALLETS = {
+            PETRA: {
+                name: 'Petra',
+                detectMethod: () => window.petra,
+                installUrl: 'https://petra.app/',
+                color: '#FF5733'
+            },
+            MARTIAN: {
+                name: 'Martian',
+                detectMethod: () => window.martian,
+                installUrl: 'https://martianwallet.xyz/',
+                color: '#8B5CF6'
+            },
+            PONTEM: {
+                name: 'Pontem',
+                detectMethod: () => window.pontem,
+                installUrl: 'https://pontem.network/pontem-wallet',
+                color: '#10B981'
+            }
+        };
+
+        let walletState = {
+            connected: false,
+            address: null,
+            balance: null,
+            walletType: null
+        };
+
+        // ==================== UTILITY FUNCTIONS ====================
+        
+        function safeCreateLucideIcons() {
+            if (typeof lucide !== 'undefined' && lucide && lucide.createIcons) {
+                try { 
+                    lucide.createIcons(); 
+                } catch (e) {
+                    console.warn('Lucide icons initialization failed:', e);
+                }
+            }
+        }
+
+        function formatAddress(address) {
+            if (!address) return '';
+            if (address.length <= 10) return address;
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // ==================== APTOS BLOCKCHAIN FUNCTIONS ====================
+        
+        async function getAptosBalance(address) {
+            if (!address) return '0.0000';
+            try {
+                const response = await fetch(
+                    `${APTOS_CONFIG.NODE_URL}/accounts/${address}/resource/0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>`
+                );
+                if (!response.ok) return '0.0000';
+                const data = await response.json();
+                const raw = data?.data?.coin?.value;
+                if (!raw) return '0.0000';
+                const balance = Number(raw) / 100000000;
+                return balance.toFixed(4);
+            } catch (error) {
+                console.error('Balance fetch error:', error);
+                return '0.0000';
+            }
+        }
+
+        async function sendAptosTransaction(wallet, recipient, amount) {
+            const amountInOctas = Math.floor(amount * 100000000);
+            
+            const payload = {
+                type: 'entry_function_payload',
+                function: '0x1::coin::transfer',
+                type_arguments: ['0x1::aptos_coin::AptosCoin'],
+                arguments: [recipient, amountInOctas.toString()]
+            };
+
+            let txHash;
+
+            if (wallet === 'PETRA' && window.petra) {
+                const response = await window.petra.signAndSubmitTransaction(payload);
+                txHash = response.hash || response;
+            } else if (wallet === 'MARTIAN' && window.martian) {
+                const response = await window.martian.signAndSubmitTransaction(payload);
+                txHash = response.hash || response;
+            } else if (wallet === 'PONTEM' && window.pontem) {
+                const response = await window.pontem.signAndSubmit(payload);
+                txHash = response.hash || response;
+            } else {
+                throw new Error('Wallet not available');
+            }
+
+            return txHash;
+        }
+
+        // ==================== WALLET FUNCTIONS ====================
+        
+        async function showWalletSelection() {
+            const walletsHtml = Object.entries(APTOS_WALLETS).map(([key, wallet]) => {
+                const isInstalled = !!wallet.detectMethod();
+                return `
+                    <div class="wallet-option ${isInstalled ? '' : 'wallet-not-installed'}" 
+                         data-wallet-key="${key}"
+                         data-installed="${isInstalled ? '1' : '0'}"
+                         style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 16px; cursor: pointer; transition: all 0.3s;">
+                        <div style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: ${wallet.color}20; color: ${wallet.color};">
+                            <i data-lucide="${isInstalled ? 'check-circle' : 'download'}" class="w-8 h-8"></i>
+                        </div>
+                        <div style="flex: 1; text-align: left;">
+                            <h4 style="margin: 0; color: white; font-weight: 600;">${wallet.name}</h4>
+                            <p style="margin: 4px 0 0 0; color: #9CA3AF; font-size: 0.875rem;">
+                                ${isInstalled ? 'Detected' : 'Not installed'}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            await Swal.fire({
+                title: '<span style="color: white;">Connect Wallet</span>',
+                html: `
+                    <div style="margin-bottom: 1rem;">
+                        <p style="color: #9CA3AF; margin: 0 0 1.5rem 0;">
+                            Connect your Aptos wallet to start donating
+                        </p>
+                    </div>
+                    <div style="display: grid; gap: 1rem;">
+                        ${walletsHtml}
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                background: 'rgba(0, 0, 0, 0.95)',
+                customClass: { popup: 'wallet-modal-popup' },
+                didOpen: () => {
+                    safeCreateLucideIcons();
+                    const popup = Swal.getPopup();
+                    if (!popup) return;
+                    
+                    popup.querySelectorAll('.wallet-option').forEach(opt => {
+                        opt.addEventListener('click', async () => {
+                            const key = opt.getAttribute('data-wallet-key');
+                            const installed = opt.getAttribute('data-installed') === '1';
+                            Swal.close();
+                            if (installed) {
+                                await connectWallet(key);
+                            } else {
+                                installWallet(key);
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
+        function installWallet(walletKey) {
+            const wallet = APTOS_WALLETS[walletKey];
+            Swal.fire({
+                icon: 'info',
+                title: `<span style="color: white;">Install ${wallet.name}</span>`,
+                html: `
+                    <p style="color: #9CA3AF; margin-bottom: 1rem;">
+                        ${wallet.name} wallet is not installed. Click below to install it.
+                    </p>
+                    <a href="${wallet.installUrl}" target="_blank" style="display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, #22c55e, #3b82f6); color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">
+                        Install ${wallet.name}
+                    </a>
+                `,
+                background: 'rgba(0, 0, 0, 0.95)',
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        }
+
+        async function connectWallet(walletKey) {
+            try {
+                const wallet = APTOS_WALLETS[walletKey];
+                const walletProvider = wallet.detectMethod();
+
+                if (!walletProvider) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '<span style="color: white;">Wallet Not Found</span>',
+                        text: `${wallet.name} wallet is not installed`,
+                        background: 'rgba(0, 0, 0, 0.95)',
+                        confirmButtonColor: '#22c55e'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: '<span style="color: white;">Connecting...</span>',
+                    html: `<p style="color: #9CA3AF;">Approve the connection in ${wallet.name}</p>`,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                let account = null;
+                if (walletKey === 'PETRA' && window.petra) {
+                    const response = await window.petra.connect();
+                    account = response?.address || response?.account;
+                } else if (walletKey === 'MARTIAN' && window.martian) {
+                    const response = await window.martian.connect();
+                    account = response?.address || response?.account;
+                } else if (walletKey === 'PONTEM' && window.pontem) {
+                    const response = await window.pontem.connect();
+                    account = response?.address || response?.account;
+                }
+
+                if (!account) throw new Error('No account returned');
+
+                const balance = await getAptosBalance(account);
+
+                walletState = {
+                    connected: true,
+                    address: account,
+                    balance: balance,
+                    walletType: walletKey
+                };
+
+                localStorage.setItem('aptosWalletConnected', 'true');
+                localStorage.setItem('aptosWalletType', walletKey);
+
+                updateWalletButton();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '<span style="color: white;">Connected!</span>',
+                    html: `
+                        <p style="color: #9CA3AF;">Successfully connected to ${wallet.name}</p>
+                        <div style="margin-top: 1rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px;">
+                            <code style="color: #22c55e; font-family: monospace;">
+                                ${formatAddress(account)}
+                            </code>
+                        </div>
+                    `,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#22c55e',
+                    timer: 3000
+                });
+
+            } catch (error) {
+                console.error('Connection error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '<span style="color: white;">Connection Failed</span>',
+                    text: error.message || 'Failed to connect wallet',
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+
+        function updateWalletButton() {
+            const btn = document.getElementById('wallet-btn');
+            if (!btn) return;
+
+            const span = btn.querySelector('span');
+            if (walletState.connected && span) {
+                span.textContent = formatAddress(walletState.address);
+                btn.onclick = showWalletDetails;
+            } else if (span) {
+                span.textContent = 'Connect Wallet';
+                btn.onclick = showWalletSelection;
+            }
+        }
+
+        function showWalletDetails() {
+            Swal.fire({
+                title: '<span style="color: white;">Your Wallet</span>',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Balance</p>
+                            <p style="color: #22c55e; font-size: 2rem; font-weight: bold; margin: 0;">
+                                ${walletState.balance} APT
+                            </p>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Address</p>
+                            <code style="color: white; font-family: monospace; font-size: 0.875rem;">
+                                ${formatAddress(walletState.address)}
+                            </code>
+                        </div>
+                        <button onclick="disconnectWallet()" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #ef4444; font-weight: 600; cursor: pointer;">
+                            Disconnect Wallet
+                        </button>
+                    </div>
+                `,
+                background: 'rgba(0, 0, 0, 0.95)',
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        }
+
+        window.disconnectWallet = function() {
+            walletState = {
+                connected: false,
+                address: null,
+                balance: null,
+                walletType: null
+            };
+            localStorage.removeItem('aptosWalletConnected');
+            localStorage.removeItem('aptosWalletType');
+            updateWalletButton();
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: '<span style="color: white;">Disconnected</span>',
+                text: 'Wallet disconnected successfully',
+                background: 'rgba(0, 0, 0, 0.95)',
+                confirmButtonColor: '#22c55e',
+                timer: 2000
+            });
+        };
+
+        // ==================== CAUSES DATA ====================
+        
+        const causesData = [
+            {
+                id: 1,
+                title: "Clean Water Initiative",
+                description: "Building sustainable water systems in rural communities across East Africa.",
+                category: "water",
+                icon: "droplets",
+                raised: 45200,
+                goal: 67500,
+                milestones: { current: 3, total: 5 },
+                gradient: "from-green-400/20 to-blue-500/20",
+                buttonGradient: "from-green-500 to-blue-600",
+                primaryColor: "green-400",
+                secondaryColor: "blue-400"
+            },
+            {
+                id: 2,
+                title: "Education for All",
+                description: "Providing quality education and resources to underprivileged children.",
+                category: "education",
+                icon: "book-open",
+                raised: 82000,
+                goal: 100000,
+                milestones: { current: 4, total: 5 },
+                gradient: "from-blue-400/20 to-purple-500/20",
+                buttonGradient: "from-blue-500 to-purple-600",
+                primaryColor: "blue-400",
+                secondaryColor: "purple-400"
+            },
+            {
+                id: 3,
+                title: "Healthcare Access",
+                description: "Establishing mobile clinics to serve remote healthcare deserts.",
+                category: "healthcare",
+                icon: "heart-pulse",
+                raised: 33750,
+                goal: 75000,
+                milestones: { current: 2, total: 6 },
+                gradient: "from-purple-400/20 to-pink-500/20",
+                buttonGradient: "from-purple-500 to-pink-600",
+                primaryColor: "purple-400",
+                secondaryColor: "pink-400"
+            },
+            {
+                id: 4,
+                title: "Forest Restoration",
+                description: "Planting native trees to restore biodiversity in deforested regions.",
+                category: "environment",
+                icon: "sprout",
+                raised: 28900,
+                goal: 50000,
+                milestones: { current: 2, total: 4 },
+                gradient: "from-emerald-400/20 to-teal-500/20",
+                buttonGradient: "from-emerald-500 to-teal-600",
+                primaryColor: "emerald-400",
+                secondaryColor: "teal-400"
+            },
+            {
+                id: 5,
+                title: "Rural School Construction",
+                description: "Building modern schools in underserved rural communities.",
+                category: "education",
+                icon: "school",
+                raised: 56300,
+                goal: 120000,
+                milestones: { current: 3, total: 8 },
+                gradient: "from-cyan-400/20 to-blue-500/20",
+                buttonGradient: "from-cyan-500 to-blue-600",
+                primaryColor: "cyan-400",
+                secondaryColor: "blue-400"
+            },
+            {
+                id: 6,
+                title: "Medical Equipment Fund",
+                description: "Providing essential medical equipment to understaffed clinics.",
+                category: "healthcare",
+                icon: "stethoscope",
+                raised: 94200,
+                goal: 150000,
+                milestones: { current: 5, total: 7 },
+                gradient: "from-red-400/20 to-rose-500/20",
+                buttonGradient: "from-red-500 to-rose-600",
+                primaryColor: "red-400",
+                secondaryColor: "rose-400"
+            }
+        ];
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // ==================== CAUSES RENDERING ====================
+        
+        function renderCauses() {
+            const grid = document.getElementById('causes-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            let filtered = causesData.filter(cause => {
+                const matchesCategory = currentCategory === 'all' || cause.category === currentCategory;
+                const matchesSearch = !searchQuery || 
+                    cause.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    cause.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+                        <i data-lucide="search-x" style="width: 64px; height: 64px; color: #9CA3AF; margin: 0 auto 1rem;"></i>
+                        <p style="color: #9CA3AF; font-size: 1.25rem;">No causes found matching your criteria</p>
+                    </div>
+                `;
+                safeCreateLucideIcons();
+                return;
+            }
+
+            filtered.forEach((cause, index) => {
+                const progress = Math.round((cause.raised / cause.goal) * 100);
+                
+                const card = document.createElement('div');
+                card.className = 'glass-card glass-card-hover p-6 rounded-2xl float-animation';
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', (index % 3) * 100);
+                
+                card.innerHTML = `
+                    <div class="w-full h-48 bg-gradient-to-br ${cause.gradient} rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="${cause.icon}" class="w-16 h-16 text-${cause.primaryColor}"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">${cause.title}</h3>
+                    <p class="text-gray-400 text-sm mb-4">${cause.description}</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Progress</span>
+                            <span class="text-${cause.primaryColor} font-bold">${progress}%</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r ${cause.buttonGradient} rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <div class="text-2xl font-bold text-${cause.primaryColor}">${cause.raised.toLocaleString()}</div>
+                            <div class="text-xs text-gray-400">of ${cause.goal.toLocaleString()} goal</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-${cause.secondaryColor}">${cause.milestones.current}/${cause.milestones.total}</div>
+                            <div class="text-xs text-gray-400">Milestones</div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button 
+                            onclick="openDonateModal(${cause.id})" 
+                            class="flex-1 py-3 bg-gradient-to-r ${cause.buttonGradient} rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
+                        >
+                            Donate Now
+                        </button>
+                        <button 
+                            onclick="viewCauseDetails(${cause.id})"
+                            class="px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-300"
+                        >
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            safeCreateLucideIcons();
+        }
+
+        // ==================== DONATION SYSTEM ====================
+        
+        window.openDonateModal = async function(causeId) {
+            const cause = causesData.find(c => c.id === causeId);
+            if (!cause) return;
+
+            if (!walletState.connected) {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: '<span style="color: white;">Connect Wallet Required</span>',
+                    text: 'You need to connect your wallet to make a donation.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Connect Wallet',
+                    cancelButtonText: 'Cancel',
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#22c55e'
+                });
+
+                if (result.isConfirmed) {
+                    await showWalletSelection();
+                }
+                return;
+            }
+
+            const { value: amount } = await Swal.fire({
+                title: `<span style="color: white;">Donate to ${cause.title}</span>`,
+                html: `
+                    <div style="text-align: left;">
+                        <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Your Balance</p>
+                            <p style="color: #22c55e; font-size: 1.5rem; font-weight: bold; margin: 0;">
+                                ${walletState.balance} APT
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem;">
+                                Donation Amount (APT)
+                            </label>
+                            <input 
+                                id="donation-amount" 
+                                type="number" 
+                                step="0.01"
+                                min="0.01"
+                                placeholder="Enter amount in APT"
+                                style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-size: 1rem;"
+                            />
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                            <button onclick="document.getElementById('donation-amount').value = '0.1'" style="padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; cursor: pointer;">
+                                0.1 APT
+                            </button>
+                            <button onclick="document.getElementById('donation-amount').value = '1'" style="padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; cursor: pointer;">
+                                1 APT
+                            </button>
+                            <button onclick="document.getElementById('donation-amount').value = '5'" style="padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; cursor: pointer;">
+                                5 APT
+                            </button>
+                        </div>
+
+                        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
+                            <p style="color: #3B82F6; margin: 0; font-size: 0.875rem;">
+                                <i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+                                Funds will be held in escrow until milestones are verified
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Send Donation',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(0, 0, 0, 0.95)',
+                confirmButtonColor: '#22c55e',
+                width: '500px',
+                didOpen: () => {
+                    safeCreateLucideIcons();
+                    document.getElementById('donation-amount').focus();
+                },
+                preConfirm: () => {
+                    const input = document.getElementById('donation-amount');
+                    const value = parseFloat(input.value);
+                    if (!value || value <= 0) {
+                        Swal.showValidationMessage('Please enter a valid amount');
+                        return false;
+                    }
+                    if (value > parseFloat(walletState.balance)) {
+                        Swal.showValidationMessage('Insufficient balance');
+                        return false;
+                    }
+                    return value;
+                }
+            });
+
+            if (amount) {
+                await processDonation(cause, amount);
+            }
+        };
+
+        async function processDonation(cause, amount) {
+            Swal.fire({
+                title: '<span style="color: white;">Processing Donation...</span>',
+                html: `
+                    <div style="text-align: center;">
+                        <div style="margin: 2rem 0;">
+                            <i data-lucide="loader" class="spinning-icon" style="width: 64px; height: 64px; color: #22c55e;"></i>
+                        </div>
+                        <p style="color: #9CA3AF;">Please approve the transaction in your wallet</p>
+                        <p style="color: #6B7280; font-size: 0.875rem; margin-top: 0.5rem;">This may take a few moments...</p>
+                    </div>
+                `,
+                background: 'rgba(0, 0, 0, 0.95)',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    safeCreateLucideIcons();
+                }
+            });
+
+            try {
+                // Send actual Aptos transaction
+                const txHash = await sendAptosTransaction(
+                    walletState.walletType,
+                    APTOS_CONFIG.RECIPIENT_ADDRESS,
+                    amount
+                );
+
+                // Wait for transaction confirmation
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '<span style="color: white;">Donation Successful! 🎉</span>',
+                    html: `
+                        <div style="text-align: center;">
+                            <div style="padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                                <p style="color: #9CA3AF; margin-bottom: 0.5rem;">Donation Amount</p>
+                                <p style="color: #22c55e; font-size: 2rem; font-weight: bold; margin: 0;">${amount} APT</p>
+                            </div>
+                            <p style="color: #9CA3AF; margin-bottom: 1rem;">
+                                Thank you for supporting <strong style="color: white;">${cause.title}</strong>!
+                            </p>
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                                <p style="color: #3B82F6; font-size: 0.875rem; margin-bottom: 0.5rem;">Transaction Hash</p>
+                                <code style="color: white; font-family: monospace; font-size: 0.75rem; word-break: break-all; display: block;">
+                                    ${txHash}
+                                </code>
+                            </div>
+                            <a href="https://explorer.aptoslabs.com/txn/${txHash}?network=testnet" target="_blank" style="display: inline-block; padding: 10px 20px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; color: #3B82F6; text-decoration: none; font-weight: 600;">
+                                View on Explorer
+                            </a>
+                        </div>
+                    `,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#22c55e',
+                    confirmButtonText: 'Done'
+                });
+
+                // Refresh balance
+                walletState.balance = await getAptosBalance(walletState.address);
+                updateWalletButton();
+
+            } catch (error) {
+                console.error('Donation error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '<span style="color: white;">Transaction Failed</span>',
+                    html: `
+                        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+                            ${error.message || 'Failed to process donation'}
+                        </p>
+                        <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px;">
+                            <p style="color: #ef4444; margin: 0; font-size: 0.875rem;">
+                                Please try again or contact support if the issue persists
+                            </p>
+                        </div>
+                    `,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+
+        // ==================== CAUSE DETAILS ====================
+        
+        window.viewCauseDetails = function(causeId) {
+            const cause = causesData.find(c => c.id === causeId);
+            if (!cause) return;
+
+            const progress = Math.round((cause.raised / cause.goal) * 100);
+
+            Swal.fire({
+                title: `<span style="color: white;">${cause.title}</span>`,
+                html: `
+                    <div style="text-align: left;">
+                        <p style="color: #9CA3AF; margin-bottom: 1.5rem; line-height: 1.6;">
+                            ${cause.description}
+                        </p>
+                        
+                        <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #22c55e; font-weight: bold; margin-bottom: 0.75rem; font-size: 1rem;">
+                                <i data-lucide="trending-up" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                Funding Progress
+                            </p>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="color: white; font-weight: 600;">${cause.raised.toLocaleString()}</span>
+                                <span style="color: #9CA3AF;">of ${cause.goal.toLocaleString()}</span>
+                            </div>
+                            <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
+                                <div style="height: 100%; background: linear-gradient(90deg, #22c55e, #3b82f6); width: ${progress}%; transition: width 0.5s;"></div>
+                            </div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
+                                ${progress}% Complete
+                            </p>
+                        </div>
+
+                        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #3B82F6; font-weight: bold; margin-bottom: 0.5rem;">
+                                <i data-lucide="flag" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                Milestones
+                            </p>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="flex: 1;">
+                                    <p style="color: white; font-size: 1.5rem; font-weight: bold; margin: 0;">
+                                        ${cause.milestones.current} of ${cause.milestones.total}
+                                    </p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem; margin: 0;">milestones completed</p>
+                                </div>
+                                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #3B82F6; font-size: 1.25rem; font-weight: bold;">
+                                        ${Math.round((cause.milestones.current / cause.milestones.total) * 100)}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 12px;">
+                            <p style="color: #A855F7; font-weight: bold; margin-bottom: 0.5rem;">
+                                <i data-lucide="shield-check" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                Verification Status
+                            </p>
+                            <p style="color: white; margin: 0; font-size: 0.875rem;">
+                                This campaign has been verified and approved by MilestoneGive
+                            </p>
+                        </div>
+                    </div>
+                `,
+                background: 'rgba(0, 0, 0, 0.95)',
+                confirmButtonColor: '#22c55e',
+                confirmButtonText: 'Close',
+                width: '600px',
+                didOpen: () => {
+                    safeCreateLucideIcons();
+                }
+            });
+        };
+
+        // ==================== CREATE CAUSE ====================
+        
+        document.getElementById('create-cause-btn').onclick = async function() {
+            if (!walletState.connected) {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: '<span style="color: white;">Connect Wallet Required</span>',
+                    text: 'You need to connect your wallet to create a cause.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Connect Wallet',
+                    cancelButtonText: 'Cancel',
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#22c55e'
+                });
+
+                if (result.isConfirmed) {
+                    await showWalletSelection();
+                }
+                return;
+            }
+
+            const { value: formData } = await Swal.fire({
+                title: '<span style="color: white;">Create a Cause</span>',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+                                Cause Name *
+                            </label>
+                            <input 
+                                id="cause-name" 
+                                type="text" 
+                                placeholder="e.g., Clean Water for Rural Kenya"
+                                style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white;"
+                            />
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+                                Description * <span style="font-weight: normal;">(min. 50 characters)</span>
+                            </label>
+                            <textarea 
+                                id="cause-description" 
+                                placeholder="Describe your cause and its impact..."
+                                rows="4"
+                                style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; resize: vertical;"
+                            ></textarea>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+                                Category *
+                            </label>
+                            <select 
+                                id="cause-category" 
+                                style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white;"
+                            >
+                                <option value="water">Water & Sanitation</option>
+                                <option value="education">Education</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="environment">Environment</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+                                Funding Goal ($) * <span style="font-weight: normal;">(min. $1,000)</span>
+                            </label>
+                            <input 
+                                id="cause-goal" 
+                                type="number" 
+                                placeholder="50000"
+                                min="1000"
+                                step="100"
+                                style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white;"
+                            />
+                        </div>
+
+                        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
+                            <p style="color: #3B82F6; margin: 0; font-size: 0.875rem; line-height: 1.5;">
+                                <i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+                                Your cause will be reviewed within 2-3 business days before going live
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Submit for Review',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(0, 0, 0, 0.95)',
+                confirmButtonColor: '#22c55e',
+                width: '600px',
+                preConfirm: () => {
+                    const name = document.getElementById('cause-name').value.trim();
+                    const description = document.getElementById('cause-description').value.trim();
+                    const category = document.getElementById('cause-category').value;
+                    const goal = parseFloat(document.getElementById('cause-goal').value);
+
+                    if (!name) {
+                        Swal.showValidationMessage('Please enter a cause name');
+                        return false;
+                    }
+                    if (name.length < 5) {
+                        Swal.showValidationMessage('Cause name must be at least 5 characters');
+                        return false;
+                    }
+                    if (!description || description.length < 50) {
+                        Swal.showValidationMessage('Description must be at least 50 characters');
+                        return false;
+                    }
+                    if (!goal || goal < 1000) {
+                        Swal.showValidationMessage('Funding goal must be at least $1,000');
+                        return false;
+                    }
+
+                    return { name, description, category, goal };
+                },
+                didOpen: () => {
+                    safeCreateLucideIcons();
+                    document.getElementById('cause-name').focus();
+                }
+            });
+
+            if (formData) {
+                Swal.fire({
+                    title: '<span style="color: white;">Processing...</span>',
+                    html: `
+                        <div style="text-align: center;">
+                            <div style="margin: 2rem 0;">
+                                <i data-lucide="loader" class="spinning-icon" style="width: 64px; height: 64px; color: #22c55e;"></i>
+                            </div>
+                            <p style="color: #9CA3AF;">Submitting your cause for review...</p>
+                        </div>
+                    `,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        safeCreateLucideIcons();
+                    }
+                });
+
+                // Simulate submission
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '<span style="color: white;">Cause Submitted Successfully! 🎉</span>',
+                    html: `
+                        <div style="text-align: left;">
+                            <p style="color: #9CA3AF; margin-bottom: 1.5rem; text-align: center;">
+                                Your cause "<strong style="color: white;">${formData.name}</strong>" has been submitted for review.
+                            </p>
+                            
+                            <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; margin-bottom: 1rem;">
+                                <p style="color: #22c55e; font-weight: bold; margin-bottom: 0.5rem;">
+                                    <i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                                    What happens next?
+                                </p>
+                                <ul style="color: white; font-size: 0.875rem; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                                    <li>Our team will review your submission</li>
+                                    <li>We'll verify all details and documentation</li>
+                                    <li>You'll receive an email update within 2-3 business days</li>
+                                </ul>
+                            </div>
+
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
+                                <p style="color: #3B82F6; margin: 0; font-size: 0.875rem; line-height: 1.5;">
+                                    <i data-lucide="mail" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+                                    We'll send updates to the email associated with your wallet
+                                </p>
+                            </div>
+                        </div>
+                    `,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    confirmButtonColor: '#22c55e',
+                    confirmButtonText: 'Got it!',
+                    width: '600px',
+                    didOpen: () => {
+                        safeCreateLucideIcons();
+                    }
+                });
+            }
+        };
+
+        // ==================== FILTERS & SEARCH ====================
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.getAttribute('data-category');
+                renderCauses();
+            });
+        });
+
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            searchQuery = e.target.value;
+            renderCauses();
+        });
+
+        document.getElementById('load-more-btn').addEventListener('click', function() {
+            Swal.fire({
+                icon: 'info',
+                title: '<span style="color: white;">All Causes Loaded</span>',
+                text: 'You\'ve reached the end of the current causes list. Check back soon for new campaigns!',
+                background: 'rgba(0, 0, 0, 0.95)',
+                confirmButtonColor: '#22c55e',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        });
+
+        // ==================== INITIALIZATION ====================
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Initializing MilestoneGive Causes page...');
+            
+            // Initialize AOS
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ 
+                    duration: 800, 
+                    once: true,
+                    offset: 100
+                });
+            }
+            
+            // Initialize Lucide icons
+            safeCreateLucideIcons();
+            
+            // Check for saved wallet connection
+            const savedWallet = localStorage.getItem('aptosWalletConnected');
+            const savedWalletType = localStorage.getItem('aptosWalletType');
+
+            if (savedWallet === 'true' && savedWalletType && APTOS_WALLETS[savedWalletType]) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const wallet = APTOS_WALLETS[savedWalletType];
+                if (wallet && wallet.detectMethod()) {
+                    await connectWallet(savedWalletType);
+                }
+            }
+
+            // Render causes
+            renderCauses();
+
+            // Update wallet button
+            updateWalletButton();
+
+            console.log('✅ MilestoneGive Causes page initialized successfully');
+        });
+    </script>
+</body>
+</html>

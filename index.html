@@ -1,0 +1,3806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MilestoneGive - Transparent Milestone-Based Donations</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/Untitled design (2).png" type="image/png">
+    <link rel="apple-touch-icon" href="/Untitled design (2).png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="script.js"></script>
+    <!-- 1. SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- 2. Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script> 
+
+<!-- 3. Wallet Connection Code -->
+<script src="wallet-connection.js"></script>
+
+<!-- 4. Donation System Code -->
+<script src="donation-system.js"></script>
+
+<!-- Aptos SDK -->
+<script src="https://unpkg.com/@aptos-labs/wallet-adapter-core@latest/dist/index.global.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Animated gradient background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 20%, rgba(34, 197, 94, 0.15), transparent 50%),
+                        radial-gradient(ellipse at 80% 60%, rgba(59, 130, 246, 0.1), transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(147, 51, 234, 0.1), transparent 50%);
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        
+        /* Content layer */
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Enhanced Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card-hover:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(34, 197, 94, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(34, 197, 94, 0.2);
+        }
+        
+        /* Glow button */
+        .glow-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 12px 32px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+        
+        .glow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .glow-btn:hover::before {
+            left: 100%;
+        }
+        
+        .glow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5),
+                        0 0 60px rgba(34, 197, 94, 0.3);
+        }
+        
+        .glow-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Badge button */
+        .badge-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .badge-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(34, 197, 94, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Nav link */
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 16px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        /* Dropdown indicator */
+        .dropdown-indicator {
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-link:hover .dropdown-indicator {
+            transform: rotate(180deg);
+        }
+        
+        /* Primary button with icon */
+        .primary-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .primary-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .primary-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+        
+        .primary-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Title animations */
+        .title-word {
+            display: inline-block;
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+        }
+        
+        .title-word:nth-child(1) { animation-delay: 0.1s; }
+        .title-word:nth-child(2) { animation-delay: 0.2s; }
+        .title-word:nth-child(3) { animation-delay: 0.3s; }
+        .title-word:nth-child(4) { animation-delay: 0.4s; }
+        .title-word:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+        
+        /* Italic text gradient */
+        .gradient-text {
+            background: linear-gradient(135deg, #34d399, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-style: italic;
+        }
+        
+        /* Description fade in */
+        .description {
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.6s;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Get Started button enhanced */
+        .get-started-btn {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            padding: 14px 32px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+        }
+        
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+        
+        .get-started-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.6),
+                        0 0 80px rgba(34, 197, 94, 0.4);
+        }
+        
+        .get-started-btn .arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        .get-started-btn:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* Secondary button */
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 32px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Social icons */
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .social-icon:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Stats card */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(34, 197, 94, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Donation Icon Enhancement */
+        .donation-icon {
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+            }
+            50% { 
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8));
+            }
+        }
+         neon stroke style */
+    .neon-seg {
+      transition: stroke-dashoffset 800ms cubic-bezier(.22,.9,.35,1), opacity 300ms;
+      opacity: 0.12;
+      will-change: stroke-dashoffset, opacity;
+    }
+    .neon-seg.active {
+      opacity: 1;
+      stroke-width: 8;
+      transition-duration: 700ms;
+    }
+
+    /* node active wobble */
+    .node .node-bg { transition: transform 300ms, fill 300ms, stroke 300ms; transform-origin: center; }
+    .node.active .node-bg { transform: translateY(-6px) scale(1.05); fill: rgba(34,197,94,0.04); stroke: rgba(34,197,94,0.22); }
+    .node .node-ring { transition: transform 500ms, stroke 300ms; transform-origin: center; }
+    .node.active .node-ring { transform: rotate(-6deg) scale(1.06); stroke: rgba(34,197,94,0.65); }
+
+    /* pulsing icon inside node */
+    .node.active .node-icon { animation: wobble 900ms ease-in-out infinite; transform-origin: center; filter: drop-shadow(0 6px 12px rgba(34,197,94,0.25)); }
+    @keyframes wobble {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-4px) rotate(-4deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(-3px) rotate(3deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* responsive */
+    @media (max-width: 1024px) {
+      svg { height: 300px; }
+    }
+    /* Button protection styles */
+.get-started-btn:disabled,
+.secondary-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* Wallet status indicator animation */
+#wallet-status-indicator.show {
+    opacity: 1;
+}
+
+/* Enhanced button hover when enabled */
+.get-started-btn:not(:disabled):hover,
+.secondary-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+}
+/* Enhanced button styles */
+.get-started-btn,
+.secondary-btn {
+    cursor: pointer !important;
+    opacity: 1 !important;
+    transition: all 0.3s ease !important;
+}
+
+.get-started-btn:hover,
+.secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+}
+
+.get-started-btn:active,
+.secondary-btn:active {
+    transform: translateY(0px);
+}
+
+/* Arrow animation for get started button */
+.get-started-btn:hover .arrow {
+    transform: translateX(4px);
+}
+
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+    </style>
+</head>
+<body>
+  <!-- Particle Canvas -->
+  <canvas id="particleCanvas"></canvas>
+  
+  <!-- Animated Background -->
+  <div class="gradient-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Content Wrapper -->
+  <div class="content">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full top-0 z-50 glass-card">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-bold mono">MilestoneGive</span>
+            </div>
+
+            <!-- Nav Links -->
+        <div class="hidden md:flex items-center gap-8">
+                <a href="All-cause.html" class="nav-link">Browse Causes</a>
+                <a href="how it works.html" class="nav-link">How It Works</a>
+                <a href="#impact" class="nav-link">Impact Stories</a>
+                
+                <!-- Resources Dropdown -->
+                <div class="relative group">
+                    <button class="nav-link flex items-center gap-1">
+                        Resources
+                        <i data-lucide="chevron-down" class="w-4 h-4 dropdown-indicator group-hover:rotate-180 transition-transform duration-300"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="absolute top-full left-0 mt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div class="bg-black/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="py-2">
+                                <a href="whitepaper.html" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="book-open" class="w-5 h-5 text-green-400"></i>
+                                    <span class="text-white text-sm">Documentation</span>
+                                </a>
+                                
+                                <a href="whitepaper.html" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+                                    <span class="text-white text-sm">Whitepaper</span>
+                                </a>
+                                
+                                <a href="#blog" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="newspaper" class="w-5 h-5 text-purple-400"></i>
+                                    <span class="text-white text-sm">Blog</span>
+                                </a>
+                                
+                                <a href="#faq" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="help-circle" class="w-5 h-5 text-yellow-400"></i>
+                                    <span class="text-white text-sm">FAQ</span>
+                                </a>
+                                
+                                <a href="#api" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="code-2" class="w-5 h-5 text-cyan-400"></i>
+                                    <span class="text-white text-sm">API Reference</span>
+                                </a>
+                                
+                                <div class="border-t border-white/10 my-2"></div>
+                                
+                                <a href="#community" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="users" class="w-5 h-5 text-pink-400"></i>
+                                    <span class="text-white text-sm">Community</span>
+                                </a>
+                                
+                                <a href="#support" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors duration-200 group/item">
+                                    <i data-lucide="headphones" class="w-5 h-5 text-orange-400"></i>
+                                    <span class="text-white text-sm">Support Center</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Social + Wallet Button -->
+            <div class="flex items-center gap-4">
+                <a href="#" class="social-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+
+                <a href="#" class="social-icon">
+                    <i data-lucide="github" class="w-5 h-5"></i>
+                </a>
+
+                <button class="primary-btn">
+                    <span>Connect Wallet</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+   
+<!-- Hero Section - Buttons Always Functional -->
+<section class="min-h-screen flex items-center justify-center px-6 py-36">
+    <div class="max-w-5xl text-center">
+        <!-- Badge -->
+        <div class="mb-8 inline-block">
+            <button class="badge-btn">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span class="mono">Powered by Move Smart Contracts</span>
+            </button>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
+            <span class="title-word">Transparent</span><br>
+            <span class="title-word gradient-text">Milestone-Based</span><br>
+            <span class="title-word">Donations</span>
+        </h1>
+
+        <!-- Description -->
+        <p class="description text-lg md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed mono"
+           style="font-size: 15px; line-height: 1.8;">
+            Donate with confidence. Your contributions are held in secure escrow<br>
+            and released only when verified milestones are achieved. Track every<br>
+            dollar, see real impact, and support causes that deliver results.<br>
+            Full transparency from donation to delivery.
+        </p>
+
+        <!-- Stats Row -->
+        <div class="flex items-center justify-center gap-6 mb-10 flex-wrap">
+            <div class="glass-card glass-card-hover p-4">
+                <div class="text-2xl font-bold text-green-400 mb-1">$2.4M+</div>
+                <div class="text-sm text-gray-400 mono">Total Donated</div>
+            </div>
+            <div class="glass-card glass-card-hover p-4">
+                <div class="text-2xl font-bold text-blue-400 mb-1">1,847</div>
+                <div class="text-sm text-gray-400 mono">Active Causes</div>
+            </div>
+            <div class="glass-card glass-card-hover p-4">
+                <div class="text-2xl font-bold text-purple-400 mb-1">98%</div>
+                <div class="text-sm text-gray-400 mono">Milestone Success</div>
+            </div>
+        </div>
+
+        <!-- Donation Icon -->
+        <div class="mb-8 flex justify-center">
+            <div class="donation-icon">
+                <svg width="62" height="62" viewBox="0 0 24 24" fill="none">
+                    <defs>
+                        <linearGradient id="donationGradient" x1="0" y1="0" x2="24" y2="24">
+                            <stop offset="0%" stop-color="#6EE7B7"/>
+                            <stop offset="50%" stop-color="#3B82F6"/>
+                            <stop offset="100%" stop-color="#A855F7"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="10" fill="url(#donationGradient)" opacity="0.9" />
+                    <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Inter, sans-serif">$</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- CTA Buttons - Always Functional -->
+        <div class="flex items-center justify-center gap-4 flex-wrap">
+            <button class="get-started-btn">
+                <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                <span>Start Donating</span>
+                <i data-lucide="arrow-right" class="w-5 h-5 arrow"></i>
+            </button>
+
+            <button class="secondary-btn">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span>Create a Cause</span>
+            </button>
+        </div>
+    </div>
+</section>
+    <!-- How It Works Section -->
+    <section class="px-6 py-24 bg-black/50">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-16">How It Works</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <!-- Step 1 -->
+                <div class="stats-card p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-blue-400 shadow-md mx-auto mb-6">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">Secure Escrow</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Every donation you make is held in a secure, blockchain-backed escrow. 
+                        This ensures that funds are protected and cannot be accessed until verified milestones are reached.
+                    </p>
+                    <ul class="text-gray-400 text-sm text-left space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-1 flex-shrink-0"></i>
+                            <span>Funds locked safely until milestone completion</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-1 flex-shrink-0"></i>
+                            <span>Transparent transaction logs accessible to donors</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-1 flex-shrink-0"></i>
+                            <span>Smart contracts prevent misuse of funds</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="stats-card p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-purple-400 shadow-md mx-auto mb-6">
+                        <i data-lucide="check-circle" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">Milestone Verification</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Each milestone undergoes thorough verification by independent auditors before funds are released.
+                    </p>
+                    <ul class="text-gray-400 text-sm text-left space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-1 flex-shrink-0"></i>
+                            <span>Independent verification ensures accountability</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-1 flex-shrink-0"></i>
+                            <span>Detailed reports available for transparency</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-1 flex-shrink-0"></i>
+                            <span>Proof of work before fund release</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="stats-card p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-400 to-pink-400 shadow-md mx-auto mb-6">
+                        <i data-lucide="trending-up" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">Release Funds</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Funds are automatically released upon milestone completion, ensuring efficient use and tangible outcomes.
+                    </p>
+                    <ul class="text-gray-400 text-sm text-left space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-1 flex-shrink-0"></i>
+                            <span>Automatic release upon completion</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-1 flex-shrink-0"></i>
+                            <span>Full transparency in fund allocation</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-1 flex-shrink-0"></i>
+                            <span>Measurable results for every donation</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Causes Section -->
+    <section class="px-6 py-24 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Featured Causes</h2>
+                <p class="text-gray-400 text-lg mono">Support verified projects making real impact</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Cause Card 1 -->
+                <div class="glass-card glass-card-hover p-6 float-animation" data-aos="fade-up" data-aos-delay="100" style="animation-delay: 0s;">
+                    <div class="w-full h-48 bg-gradient-to-br from-green-400/20 to-blue-500/20 rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="droplets" class="w-16 h-16 text-green-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Clean Water Initiative</h3>
+                    <p class="text-gray-400 text-sm mb-4">Building sustainable water systems in rural communities across East Africa.</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Progress</span>
+                            <span class="text-green-400 font-bold">67%</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full" style="width: 67%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <div class="text-2xl font-bold text-green-400">$45,200</div>
+                            <div class="text-xs text-gray-400">of $67,500 goal</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-blue-400">3/5</div>
+                            <div class="text-xs text-gray-400">Milestones</div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300">
+                        View Campaign
+                    </button>
+                </div>
+
+                <!-- Cause Card 2 -->
+                <div class="glass-card glass-card-hover p-6 float-animation" data-aos="fade-up" data-aos-delay="200" style="animation-delay: 0.5s;">
+                    <div class="w-full h-48 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-16 h-16 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Education for All</h3>
+                    <p class="text-gray-400 text-sm mb-4">Providing quality education and resources to underprivileged children.</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Progress</span>
+                            <span class="text-blue-400 font-bold">82%</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full" style="width: 82%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-400">$82,000</div>
+                            <div class="text-xs text-gray-400">of $100,000 goal</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-purple-400">4/5</div>
+                            <div class="text-xs text-gray-400">Milestones</div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
+                        View Campaign
+                    </button>
+                </div>
+
+                <!-- Cause Card 3 -->
+                <div class="glass-card glass-card-hover p-6 float-animation" data-aos="fade-up" data-aos-delay="300" style="animation-delay: 1s;">
+                    <div class="w-full h-48 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="heart-pulse" class="w-16 h-16 text-purple-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Healthcare Access</h3>
+                    <p class="text-gray-400 text-sm mb-4">Establishing mobile clinics to serve remote healthcare deserts.</p>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Progress</span>
+                            <span class="text-purple-400 font-bold">45%</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <div class="text-2xl font-bold text-purple-400">$33,750</div>
+                            <div class="text-xs text-gray-400">of $75,000 goal</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-pink-400">2/6</div>
+                            <div class="text-xs text-gray-400">Milestones</div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300">
+                        View Campaign
+                    </button>
+                </div>
+            </div>
+
+            <!-- View All Button -->
+            <div class="text-center mt-12" data-aos="fade-up">
+                <button class="secondary-btn">
+                  <a href="All-cause.html"><span>View All Causes</span></a>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Milestone-Based Section -->
+    <section class="px-6 py-24 bg-black/50 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <!-- Text Column -->
+            <div class="flex flex-col gap-6" data-aos="fade-right" data-aos-duration="1000">
+                <h2 class="text-4xl font-bold mb-6 gradient-text">Why Milestone-Based Donations Matter</h2>
+                
+                <p class="text-gray-400 leading-relaxed text-lg" data-aos="fade-up" data-aos-delay="100">
+                    Traditional donations often leave donors unsure of the impact of their contributions. Milestone-based giving transforms this experience by tying funds directly to verified project achievements.
+                </p>
+                
+                <p class="text-gray-400 leading-relaxed text-lg" data-aos="fade-up" data-aos-delay="300">
+                    Projects are broken into clearly defined milestones. Funds remain in secure escrow until independent verification confirms objectives have been met.
+                </p>
+                
+                <div class="flex flex-col gap-4 mt-6">
+                    <div class="glass-card glass-card-hover p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay="500">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-green-400 flex-shrink-0"></i>
+                        <span class="text-gray-200 text-sm">Secure Escrow: Contributions held safely until milestone verification</span>
+                    </div>
+                    <div class="glass-card glass-card-hover p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay="700">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-blue-400 flex-shrink-0"></i>
+                        <span class="text-gray-200 text-sm">Verified Milestones: Independent evaluation ensures accountability</span>
+                    </div>
+                    <div class="glass-card glass-card-hover p-4 flex items-center gap-3" data-aos="fade-up" data-aos-delay="900">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-purple-400 flex-shrink-0"></i>
+                        <span class="text-gray-200 text-sm">Impact Visibility: Real-time tracking of funds and milestones</span>
+                    </div>
+                </div>
+                
+                <p class="text-gray-400 leading-relaxed text-lg mt-6" data-aos="fade-up" data-aos-delay="1100">
+                    MilestoneGive empowers donors to make informed decisions and builds a sustainable ecosystem of trust and accountability.
+                </p>
+
+                <button class="get-started-btn w-max mt-6 self-start" data-aos="zoom-in" data-aos-delay="1300">
+                    <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                    <span>Explore Causes</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5 arrow"></i>
+                </button>
+            </div>
+
+            <!-- Illustration Column -->
+            <div class="flex justify-center md:justify-end" data-aos="fade-left" data-aos-duration="1000">
+                <div class="glass-card p-6 w-full max-w-md shadow-xl transition-transform duration-700 hover:scale-105" data-aos="zoom-in" data-aos-delay="800">
+                    <div class="w-full h-80 bg-gradient-to-br from-green-400/10 via-blue-500/10 to-purple-500/10 rounded-xl flex items-center justify-center">
+                        <i data-lucide="hand-heart" class="w-32 h-32 text-green-400 opacity-60"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donation Flow Section -->
+    <section class="py-24 bg-black/50 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
+            <!-- Text Column -->
+            <div class="flex flex-col gap-6" data-aos="fade-right" data-aos-duration="1000">
+                <h2 class="text-4xl font-bold text-white mb-6">Donation Flow: From Pledge to Impact</h2>
+
+                <p class="text-gray-400 text-lg leading-relaxed">
+                    Every donation is tracked from the moment you pledge. Your funds are securely held in escrow, released only after milestones are verified.
+                </p>
+
+                <div class="flex flex-col gap-6 mt-8">
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex items-center gap-4" data-aos="fade-up" data-aos-delay="200">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-green-400 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Step 1: Pledge</h4>
+                            <p class="text-gray-300 text-sm">Your contribution is pledged and securely recorded on the blockchain.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex items-center gap-4" data-aos="fade-up" data-aos-delay="400">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-blue-400 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Step 2: Escrow</h4>
+                            <p class="text-gray-300 text-sm">Funds are securely held in escrow via smart contracts, preventing misuse.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex items-center gap-4" data-aos="fade-up" data-aos-delay="600">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-purple-400 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Step 3: Milestone Verification</h4>
+                            <p class="text-gray-300 text-sm">Independent auditors confirm project milestones before fund release.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex items-center gap-4" data-aos="fade-up" data-aos-delay="800">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-yellow-400 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-white">Step 4: Release & Impact</h4>
+                            <p class="text-gray-300 text-sm">Funds are released and donors can see tangible results in real time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Illustration Column -->
+         <!-- 3D Illustration Column -->
+<div class="relative w-full h-[500px]" data-aos="fade-left" data-aos-duration="1000">
+    <img src="/ddao/54501.jpg" alt="Donation Flow Illustration" class="w-full h-full object-cover rounded-2xl shadow-xl">
+</div>
+
+        </div>
+    </section>
+    <section class="py-28 bg-black/40 backdrop-blur-xl relative">
+    <div class="max-w-7xl mx-auto px-6">
+        
+        <!-- Section Header -->
+        <div class="text-center mb-20" data-aos="fade-up">
+            <h2 class="text-4xl font-bold text-white mb-4">Why Trust MilestoneGive?</h2>
+            <p class="text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
+                Transparency is more than a feature — it's the foundation of impactful giving. 
+                MilestoneGive ensures that every contribution directly fuels verified progress, 
+                creating a donation ecosystem built on evidence, integrity, and accountability.
+            </p>
+        </div>
+
+        <!-- Trust Grid -->
+        <div class="grid md:grid-cols-3 gap-12">
+            
+            <!-- Card 1 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-right"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-green-500 to-blue-600">
+                    <i data-lucide="shield" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Immutable Smart Contract Protection</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Donations are held in trustless smart contracts where no intermediary — not even the project owners —
+                    can access them early. Funds move only when proof is submitted, verified, and validated on-chain.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-up"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600">
+                    <i data-lucide="search-check" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Independent Milestone Verifiers</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Each milestone is reviewed by neutral third-party verifiers who confirm authenticity using
+                    evidence, audits, timestamps, and on-chain signatures — guaranteeing unbiased transparency.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-left"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Real-Time Transparency Dashboard</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Track milestone completion, evidence proofs, donor pools, fund releases, and project timelines 
+                    all in real time. Every event is logged permanently, forming a complete transparency trail.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- SECOND ROW -->
+        <div class="grid md:grid-cols-3 gap-12 mt-16">
+            
+            <!-- Card 4 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-right"
+                data-aos-delay="200"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500">
+                    <i data-lucide="layers" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Layered Proof-of-Progress System</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Every milestone requires multimedia proof — images, reports, receipts, coordinates, timestamps, 
+                    and validator attestations — creating layered verification that’s impossible to fake.
+                </p>
+            </div>
+
+            <!-- Card 5 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-up"
+                data-aos-delay="200"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-600">
+                    <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Community Oversight & Governance</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    The community can vote, flag issues, and participate in governance, creating a collective 
+                    assurance model where donors and supporters help maintain system integrity.
+                </p>
+            </div>
+
+            <!-- Card 6 -->
+            <div 
+                class="p-8 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:scale-[1.03] transition-all duration-500"
+                data-aos="fade-left"
+                data-aos-delay="200"
+            >
+                <div class="mb-5 flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-fuchsia-500 to-red-600">
+                    <i data-lucide="lock" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Security-First Infrastructure</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    From anti-fraud checks to contract audits and encrypted evidence uploads, MilestoneGive 
+                    is engineered with security at its core. Your contributions stay protected from risks.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Footer Line -->
+        <p class="text-center text-gray-500 text-sm max-w-2xl mx-auto mt-20" data-aos="fade-up" data-aos-delay="300">
+            With MilestoneGive, donors finally receive the clarity and control they deserve — and causes gain a 
+            powerful framework to prove their real-world impact, one verified milestone at a time.
+        </p>
+
+    </div>
+</section>
+
+<section id="verification" class="px-6 py-24 bg-black/40 backdrop-blur-md">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Header -->
+    <div class="text-center mb-16" data-aos="fade-up">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Verification Standards</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+        Every milestone verified on MilestoneGive must pass a strict multi-layered review process.  
+        These standards protect donors, empower project teams, and maintain trust across the platform.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+      <!-- Block 1 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="100">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600">
+            <i data-lucide="file-search" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Evidence-Based Review</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Each milestone must include photo, video, document, or sensor-backed evidence.
+          No milestone can pass without verifiable proof that ties directly to the result promised.
+        </p>
+      </div>
+
+      <!-- Block 2 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-500 to-teal-600">
+            <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Independent Verification</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Third-party verifiers review all submitted evidence and compare it with the
+          milestone’s expected deliverables. No internal teams or donors influence the outcome.
+        </p>
+      </div>
+
+      <!-- Block 3 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="300">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-500 to-fuchsia-600">
+            <i data-lucide="badge-check" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Tamper-Proof Records</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Verification results are hashed and stored on-chain.  
+          No entity—including project owners or platform staff—can alter or remove a record once verified.
+        </p>
+      </div>
+
+      <!-- Block 4 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="400">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500">
+            <i data-lucide="layers" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Multi-Layer Validation</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Milestones undergo 3 layers of checks:  
+          community validation (open), AI pattern checks (automated), and expert review (human).  
+          Only milestones that pass all layers move forward.
+        </p>
+      </div>
+
+      <!-- Block 5 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="500">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-pink-500 to-rose-500">
+            <i data-lucide="alert-octagon" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Fraud Detection & Risk Scoring</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          The system automatically flags anomalies such as inconsistent timestamps, duplicate media,
+          GPS mismatches, or suspicious metadata.  
+          Risky submissions trigger manual inspection.
+        </p>
+      </div>
+
+      <!-- Block 6 -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="600">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-500">
+            <i data-lucide="globe" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="font-semibold text-white text-xl">Transparency for All Donors</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Every donor can publicly see the verification timeline,
+          submitted evidence, review notes, and on-chain receipts for each milestone.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-16" data-aos="fade-up" data-aos-delay="700">
+      <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold shadow-lg hover:opacity-90 transition">
+        Learn More About Verification
+      </button>
+    </div>
+
+  </div>
+</section>
+<!-- Donor Impact Calculator Section -->
+<section class="px-6 py-24 bg-black/50 overflow-hidden" id="impact-calculator">
+  <div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
+    <h2 class="text-4xl font-bold mb-6 gradient-text">Donor Impact Calculator</h2>
+    <p class="text-gray-400 mb-8">Estimate your donation impact in real time. Select a token, choose an amount, and see how many milestones your contribution supports.</p>
+
+    <div class="glass-card glass-card-hover p-6 flex flex-col gap-6">
+      <!-- Token Selection -->
+      <div class="flex flex-col items-start gap-2">
+        <label for="token-select" class="text-gray-200 font-medium">Choose Token / Currency:</label>
+        <select id="token-select" class="w-full p-2 rounded-lg bg-black/20 text-white border border-gray-500 focus:border-green-400">
+          <!-- Options populated dynamically -->
+        </select>
+      </div>
+
+      <!-- Donation Amount Slider -->
+      <div class="flex flex-col items-start gap-2">
+        <label for="donation-amount" class="text-gray-200 font-medium">Donation Amount: <span id="donation-value">50</span></label>
+        <input type="range" id="donation-amount" min="1" max="10000" step="1" value="50" class="w-full h-2 bg-gray-700 rounded-lg accent-green-400">
+      </div>
+
+      <!-- Impact Display -->
+      <div class="flex flex-col items-start gap-2">
+        <div class="text-gray-400">USD Equivalent: <span id="usd-value">$0.00</span></div>
+        <div class="text-gray-400">Estimated Milestones Supported: <span id="milestone-count">0</span></div>
+      </div>
+
+      <button id="donate-btn" class="get-started-btn w-full mt-4">
+        <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+        <span>Proceed to Donate</span>
+        <i data-lucide="arrow-right" class="w-5 h-5 arrow"></i>
+      </button>
+    </div>
+  </div>
+</section>
+<section id="faq" class="py-20 px-6 relative">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Section Title -->
+    <h2 class="text-4xl md:text-5xl font-bold mb-6 text-center gradient-text" data-aos="fade-up">
+      Frequently Asked Questions
+    </h2>
+    <p class="text-gray-400 text-center max-w-xl mx-auto mb-12" data-aos="fade-up" data-aos-delay="150">
+      Everything you need to understand how milestone-based donations work, why they’re safer, and what makes MilestoneGive different.
+    </p>
+
+    <!-- Smart Predictor Badge -->
+    <div id="smart-faq-badge"
+         class="hidden mb-6 text-center text-sm text-green-400 animate-pulse">
+      🔍 We think you're looking for: <span id="smart-faq-highlight" class="font-semibold"></span>
+    </div>
+
+    <!-- Accordion -->
+    <div class="space-y-4">
+
+      <!-- Item -->
+      <div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up">
+        <button class="faq-header flex justify-between items-center w-full text-left">
+          <span class="text-lg font-semibold text-white">How does milestone-based giving work?</span>
+          <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+        </button>
+        <div class="faq-body hidden mt-2 text-gray-400">
+          Donations are released only when a project verifiably completes predefined milestones.
+          This ensures transparency, reduces misuse, and builds trust for both donors and creators.
+        </div>
+      </div>
+
+      <!-- Item -->
+      <div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="50">
+        <button class="faq-header flex justify-between items-center w-full text-left">
+          <span class="text-lg font-semibold text-white">How do you verify milestones?</span>
+          <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+        </button>
+        <div class="faq-body hidden mt-2 text-gray-400">
+          Each milestone undergoes multi-layer verification — creator proof uploads, third-party auditors,
+          and automated smart checks. Only approved milestones release funds.
+        </div>
+      </div>
+
+      <!-- Item -->
+      <div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="100">
+        <button class="faq-header flex justify-between items-center w-full text-left">
+          <span class="text-lg font-semibold text-white">Can I track how my funds move?</span>
+          <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+        </button>
+        <div class="faq-body hidden mt-2 text-gray-400">
+          Yes — every donation has a public milestone map showing progress, authentication logs,
+          and a transparent ledger of released vs locked funds.
+        </div>
+      </div>
+
+      <!-- Item -->
+      <div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="150">
+        <button class="faq-header flex justify-between items-center w-full text-left">
+          <span class="text-lg font-semibold text-white">What currencies or tokens can I donate with?</span>
+          <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+        </button>
+        <div class="faq-body hidden mt-2 text-gray-400">
+          We support stablecoins (USDC, USDT, DAI), major tokens (ETH, SOL, BTC), and more coming soon.
+          Conversion happens automatically with live oracle pricing.
+        </div>
+      </div>
+
+      <!-- Item -->
+      <div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="200">
+        <button class="faq-header flex justify-between items-center w-full text-left">
+          <span class="text-lg font-semibold text-white">Is MilestoneGive safe?</span>
+          <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+        </button>
+        <div class="faq-body hidden mt-2 text-gray-400">
+          Your funds remain locked in a smart-verified vault until milestones pass strict validation.
+          You retain full control and can pause or withdraw support at any time before release.
+        </div>
+      </div>
+      <!-- Item -->
+<div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="250">
+  <button class="faq-header flex justify-between items-center w-full text-left">
+    <span class="text-lg font-semibold text-white">Can I donate anonymously?</span>
+    <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+  </button>
+  <div class="faq-body hidden mt-2 text-gray-400">
+    Absolutely! You can choose to hide your name publicly while still tracking milestone contributions for rewards or recognition.
+  </div>
+</div>
+
+<!-- Item -->
+<div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="300">
+  <button class="faq-header flex justify-between items-center w-full text-left">
+    <span class="text-lg font-semibold text-white">What happens if a milestone fails verification?</span>
+    <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+  </button>
+  <div class="faq-body hidden mt-2 text-gray-400">
+    Funds for that milestone remain locked until the creator resubmits proof or the milestone is revised. Donors are notified instantly and can approve or pause further contributions.
+  </div>
+</div>
+
+<!-- Item -->
+<div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="350">
+  <button class="faq-header flex justify-between items-center w-full text-left">
+    <span class="text-lg font-semibold text-white">Do you charge fees?</span>
+    <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+  </button>
+  <div class="faq-body hidden mt-2 text-gray-400">
+    MilestoneGive charges a minimal service fee only when milestones are successfully completed. No hidden fees on locked or unverified funds.
+  </div>
+</div>
+
+<!-- Item -->
+<div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="400">
+  <button class="faq-header flex justify-between items-center w-full text-left">
+    <span class="text-lg font-semibold text-white">Can I set recurring donations?</span>
+    <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+  </button>
+  <div class="faq-body hidden mt-2 text-gray-400">
+    Yes! You can schedule recurring contributions per milestone or per project. The system automatically tracks your recurring donations and milestone releases.
+  </div>
+</div>
+
+<!-- Item -->
+<div class="faq-item glass-card p-4 rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="450">
+  <button class="faq-header flex justify-between items-center w-full text-left">
+    <span class="text-lg font-semibold text-white">Is there a mobile app?</span>
+    <i data-lucide="chevron-down" class="icon w-5 h-5 text-gray-300 transition-transform"></i>
+  </button>
+  <div class="faq-body hidden mt-2 text-gray-400">
+    Currently, MilestoneGive is fully responsive on mobile and tablet. A native mobile app is in development to provide instant milestone notifications and one-tap donations.
+  </div>
+</div>
+
+
+    </div>
+
+  </div>
+</section>
+<!-- Why Milestone-Based Donations Matter -->
+    <section class="py-24 relative overflow-hidden">
+      <!-- Background Elements -->
+      <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div class="absolute top-1/4 left-0 w-64 h-64 bg-green-500/5 rounded-full blur-[80px]"></div>
+        <div class="absolute bottom-1/4 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px]"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-20" data-aos="fade-up">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+            <span class="text-xs font-bold text-blue-400 uppercase tracking-wide">Trustless Architecture</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+            Don't Just Donate. <span class="text-white">Invest in Impact.</span>
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+            We've replaced "trust me bro" with cryptographic guarantees. Your funds stay in your control until the work is done.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <!-- Comparison -->
+          <div class="space-y-6" data-aos="fade-right">
+            <!-- Traditional Card -->
+            <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-red-500/5 hover:border-red-500/20 transition-all duration-300">
+              <div class="absolute top-6 right-6 opacity-20 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="alert-circle" class="w-6 h-6 text-red-500"></i>
+              </div>
+              <h3 class="text-xl font-bold mb-2 text-gray-300 group-hover:text-red-400 transition-colors">The Old Way</h3>
+              <p class="text-gray-500 text-sm mb-4">"Black Box" Philanthropy</p>
+              <ul class="space-y-3">
+                <li class="flex items-center gap-3 text-gray-400">
+                  <i data-lucide="x" class="w-4 h-4 text-red-500"></i>
+                  <span>Up to 40% lost to admin fees</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-400">
+                  <i data-lucide="x" class="w-4 h-4 text-red-500"></i>
+                  <span>Months of delay in reporting</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-400">
+                  <i data-lucide="x" class="w-4 h-4 text-red-500"></i>
+                  <span>No refund if project fails</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Milestone Card -->
+            <div class="group relative p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-blue-600/10 border border-green-500/20 hover:border-green-500/40 transition-all duration-300 shadow-lg shadow-green-900/20">
+              <div class="absolute top-6 right-6">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              </div>
+              <h3 class="text-xl font-bold mb-2 text-white">The Milestone Way</h3>
+              <p class="text-green-400 text-sm mb-4">Programmable Accountability</p>
+              <ul class="space-y-3">
+                <li class="flex items-center gap-3 text-gray-300">
+                  <div class="p-1 rounded-full bg-green-500/20">
+                    <i data-lucide="check" class="w-3 h-3 text-green-400"></i>
+                  </div>
+                  <span><span class="text-white font-bold">0%</span> platform fees (Gas only)</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-300">
+                  <div class="p-1 rounded-full bg-green-500/20">
+                    <i data-lucide="check" class="w-3 h-3 text-green-400"></i>
+                  </div>
+                  <span>Real-time on-chain verification</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-300">
+                  <div class="p-1 rounded-full bg-green-500/20">
+                    <i data-lucide="check" class="w-3 h-3 text-green-400"></i>
+                  </div>
+                  <span>Auto-refunds via Smart Contract</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Stats / Visuals -->
+          <div class="relative" data-aos="fade-left">
+            <div class="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-blue-600/20 rounded-3xl blur-xl opacity-50"></div>
+            <div class="glass-card p-8 relative">
+              <h3 class="text-2xl font-bold mb-8">Impact Multipliers</h3>
+              
+              <div class="grid gap-6">
+                <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-green-500/30 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                      <i data-lucide="trending-up" class="w-5 h-5 text-green-400"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-400">Donor Retention</p>
+                      <p class="font-bold text-white">2.5x Higher</p>
+                    </div>
+                  </div>
+                  <span class="text-green-400 text-xs font-bold bg-green-500/10 px-2 py-1 rounded">+150%</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                      <i data-lucide="zap" class="w-5 h-5 text-blue-400"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-400">Speed to Impact</p>
+                      <p class="font-bold text-white">Instant</p>
+                    </div>
+                  </div>
+                  <span class="text-blue-400 text-xs font-bold bg-blue-500/10 px-2 py-1 rounded">Real-time</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <i data-lucide="lock" class="w-5 h-5 text-purple-400"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-400">Fraud Reduction</p>
+                      <p class="font-bold text-white">Near 100%</p>
+                    </div>
+                  </div>
+                  <span class="text-purple-400 text-xs font-bold bg-purple-500/10 px-2 py-1 rounded">Secure</span>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-6 border-t border-white/10 text-center">
+                <p class="text-sm text-gray-500 mb-4">Powered by</p>
+                <div class="flex justify-center items-center gap-2 opacity-70 hover:opacity-100 transition-opacity">
+                  <img src="https://cryptologos.cc/logos/aptos-apt-logo.png" alt="Aptos" class="w-6 h-6 grayscale hover:grayscale-0 transition-all">
+                  <span class="font-bold text-lg tracking-tight">APTOS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<!-- Donor Impact Section -->
+<section class="py-24 bg-gradient-to-b from-black/50 to-black/70 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-4xl font-bold text-white mb-8" data-aos="fade-up" data-aos-duration="1000">
+            See Your Impact in Real Time
+        </h2>
+        <p class="text-gray-400 text-lg max-w-3xl mx-auto mb-16" data-aos="fade-up" data-aos-delay="200">
+            Every contribution helps projects hit milestones faster. Watch your donations turn into real-world change.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-card glass-card-hover p-8 rounded-2xl flex flex-col items-center gap-4" data-aos="fade-up" data-aos-delay="300">
+                <i data-lucide="award" class="w-10 h-10 text-yellow-400"></i>
+                <h4 class="font-semibold text-white text-xl">Verified Milestones</h4>
+                <p class="text-gray-300 text-sm text-center">
+                    Every milestone is audited and verified, ensuring your donation creates measurable impact.
+                </p>
+            </div>
+
+            <div class="glass-card glass-card-hover p-8 rounded-2xl flex flex-col items-center gap-4" data-aos="fade-up" data-aos-delay="500">
+                <i data-lucide="trending-up" class="w-10 h-10 text-green-400"></i>
+                <h4 class="font-semibold text-white text-xl">Growth of Contributions</h4>
+                <p class="text-gray-300 text-sm text-center">
+                    Track how your donations contribute to the overall success of projects over time.
+                </p>
+            </div>
+
+            <div class="glass-card glass-card-hover p-8 rounded-2xl flex flex-col items-center gap-4" data-aos="fade-up" data-aos-delay="700">
+                <i data-lucide="users" class="w-10 h-10 text-blue-400"></i>
+                <h4 class="font-semibold text-white text-xl">Community Powered</h4>
+                <p class="text-gray-300 text-sm text-center">
+                    Join a growing network of donors driving positive change together. Every action counts.
+                </p>
+            </div>
+        </div>
+
+        <!-- Surprise Feature: Live Impact Counter -->
+        <div class="mt-16" data-aos="fade-up" data-aos-delay="900">
+            <h3 class="text-3xl font-bold text-white mb-4">Live Impact Counter</h3>
+            <p class="text-gray-300 mb-6">Total milestones unlocked by our community:</p>
+            <span id="liveCounter" class="text-6xl font-extrabold text-green-400">0</span>
+        </div>
+    </div>
+</section>
+<!-- CTA + Footer Section -->
+<section class="bg-black/70 text-white relative overflow-hidden">
+  <!-- Animated particles background for CTA -->
+  <div class="absolute inset-0 opacity-30 pointer-events-none">
+    <div class="absolute w-96 h-96 bg-green-500/20 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
+    <div class="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl bottom-10 right-10 animate-pulse" style="animation-delay: 1s;"></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="max-w-7xl mx-auto px-6 py-24 text-center relative z-10" data-aos="fade-up" data-aos-duration="1000">
+    <div class="inline-block mb-6" data-aos="zoom-in" data-aos-delay="100">
+      <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-green-500/50 animate-pulse">
+        <i data-lucide="heart-handshake" class="w-10 h-10 text-white"></i>
+      </div>
+    </div>
+    
+    <h2 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent" data-aos="fade-up" data-aos-delay="200">
+      Ready to Make an Impact?
+    </h2>
+    
+    <p class="text-gray-300 text-lg md:text-xl mb-10 max-w-3xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="300">
+      Your donation goes directly to verified milestones. Join our community of changemakers and see the real impact of your contribution in real-time.
+    </p>
+    
+    <div class="flex items-center justify-center gap-4 flex-wrap" data-aos="zoom-in" data-aos-delay="400">
+      <a href="#donate" class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-green-400 to-blue-500 text-black font-bold px-10 py-5 rounded-2xl shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-500 hover:scale-110 overflow-hidden">
+        <span class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+        <i data-lucide="rocket" class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-300"></i>
+        <span class="relative z-10">Start Donating Now</span>
+        <i data-lucide="arrow-right" class="w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform duration-300"></i>
+      </a>
+      
+      <a href="#learn" class="group inline-flex items-center gap-3 bg-white/5 backdrop-blur-lg border-2 border-white/20 text-white font-semibold px-10 py-5 rounded-2xl hover:bg-white/10 hover:border-green-400/50 transition-all duration-300 hover:scale-105">
+        <i data-lucide="info" class="w-5 h-5 group-hover:rotate-12 transition-transform duration-300"></i>
+        <span>Learn More</span>
+      </a>
+    </div>
+    
+    <!-- Trust indicators -->
+    <div class="mt-16 flex items-center justify-center gap-8 flex-wrap" data-aos="fade-up" data-aos-delay="500">
+      <div class="flex items-center gap-2 text-gray-400 text-sm">
+        <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i>
+        <span>100% Secure</span>
+      </div>
+      <div class="flex items-center gap-2 text-gray-400 text-sm">
+        <i data-lucide="eye" class="w-5 h-5 text-blue-400"></i>
+        <span>Fully Transparent</span>
+      </div>
+      <div class="flex items-center gap-2 text-gray-400 text-sm">
+        <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
+        <span>1200+ Donors</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 bg-gradient-to-b from-black/80 to-black mt-12 py-16 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Main Footer Content -->
+      <div class="grid md:grid-cols-4 gap-12 mb-12">
+        
+        <!-- Brand Column -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-white">MilestoneGive</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            A Web3-powered platform connecting donors to verified projects worldwide. Transparency and impact are our core values.
+          </p>
+          <div class="flex gap-3 mt-4">
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-green-500/20 hover:border-green-400/50 transition-all duration-300 group">
+              <i data-lucide="twitter" class="w-5 h-5 text-gray-400 group-hover:text-green-400 transition-colors"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-400/50 transition-all duration-300 group">
+              <i data-lucide="linkedin" class="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-purple-500/20 hover:border-purple-400/50 transition-all duration-300 group">
+              <i data-lucide="github" class="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Platform Links -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="200">
+          <h4 class="text-white font-bold text-lg mb-2">Platform</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="#browse" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="search" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Browse Causes</span>
+              </a>
+            </li>
+            <li>
+              <a href="#create" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="plus-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Create Campaign</span>
+              </a>
+            </li>
+            <li>
+              <a href="#how-it-works" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="help-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>How It Works</span>
+              </a>
+            </li>
+            <li>
+              <a href="#calculator" class="text-gray-400 text-sm hover:text-green-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="calculator" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Impact Calculator</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="300">
+          <h4 class="text-white font-bold text-lg mb-2">Resources</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="#docs" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="book-open" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Documentation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#faq" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="message-circle" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>FAQ</span>
+              </a>
+            </li>
+            <li>
+              <a href="#blog" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="newspaper" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Blog</span>
+              </a>
+            </li>
+            <li>
+              <a href="#whitepaper" class="text-gray-400 text-sm hover:text-blue-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="file-text" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Whitepaper</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Legal & Support -->
+        <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="400">
+          <h4 class="text-white font-bold text-lg mb-2">Legal & Support</h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="#privacy" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="shield" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Privacy Policy</span>
+              </a>
+            </li>
+            <li>
+              <a href="#terms" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="file-check" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Terms of Service</span>
+              </a>
+            </li>
+            <li>
+              <a href="#contact" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="mail" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Contact Us</span>
+              </a>
+            </li>
+            <li>
+              <a href="#support" class="text-gray-400 text-sm hover:text-purple-400 transition-colors duration-300 flex items-center gap-2 group">
+                <i data-lucide="headphones" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                <span>Support Center</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="fade-up" data-aos-delay="500">
+        <p class="text-gray-500 text-sm">
+          © 2025 MilestoneGive. All rights reserved. Built by codr!.
+        </p>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="#status" class="text-gray-400 hover:text-green-400 transition-colors duration-300 flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <span>All Systems Operational</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</section>
+  <script>
+    // Particle System
+    const particleCanvas = document.getElementById('particleCanvas');
+    const particleCtx = particleCanvas.getContext('2d');
+    
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    
+    const particles = [];
+    const particleCount = 80;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * particleCanvas.width;
+        this.y = Math.random() * particleCanvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.2;
+      }
+      
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x > particleCanvas.width) this.x = 0;
+        if (this.x < 0) this.x = particleCanvas.width;
+        if (this.y > particleCanvas.height) this.y = 0;
+        if (this.y < 0) this.y = particleCanvas.height;
+      }
+      
+      draw() {
+        particleCtx.fillStyle = `rgba(34, 197, 94, ${this.opacity})`;
+        particleCtx.beginPath();
+        particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        particleCtx.fill();
+      }
+    }
+    
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+    
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 120) {
+            particleCtx.strokeStyle = `rgba(34, 197, 94, ${0.2 * (1 - distance / 120)})`;
+            particleCtx.lineWidth = 0.5;
+            particleCtx.beginPath();
+            particleCtx.moveTo(particles[i].x, particles[i].y);
+            particleCtx.lineTo(particles[j].x, particles[j].y);
+            particleCtx.stroke();
+          }
+        }
+      }
+    }
+    
+    function animateParticles() {
+      particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+      
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
+    
+    initParticles();
+    animateParticles();
+    
+    window.addEventListener('resize', () => {
+      particleCanvas.width = window.innerWidth;
+      particleCanvas.height = window.innerHeight;
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Parallax background
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+          const gradient = document.querySelector('.gradient-bg');
+          if (gradient) {
+            gradient.style.transform = `translateY(${scrolled * 0.5}px)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  lucide.createIcons();
+
+  const tokenSelect = document.getElementById("token-select");
+  const donationAmount = document.getElementById("donation-amount");
+  const donationValue = document.getElementById("donation-value");
+  const usdValue = document.getElementById("usd-value");
+  const milestoneCount = document.getElementById("milestone-count");
+
+  // Define tokens and CoinGecko IDs
+  const tokens = [
+    { symbol: "USDC", id: "usd-coin" },
+    { symbol: "USDT", id: "tether" },
+    { symbol: "DAI", id: "dai" },
+    { symbol: "ETH", id: "ethereum" },
+    { symbol: "BTC", id: "bitcoin" },
+    { symbol: "SOL", id: "solana" }
+  ];
+
+  // Populate token select
+  tokens.forEach(token => {
+    const opt = document.createElement("option");
+    opt.value = token.id;
+    opt.textContent = token.symbol;
+    tokenSelect.appendChild(opt);
+  });
+
+  // Fetch live prices
+  async function fetchPrices() {
+    try {
+      const ids = tokens.map(t => t.id).join(",");
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Failed to fetch token prices:", err);
+      return null;
+    }
+  }
+
+  let prices = await fetchPrices();
+
+  // Re-fetch prices every 60 seconds
+  setInterval(async () => {
+    prices = await fetchPrices();
+  }, 60000);
+
+  // Milestone logic
+  const milestoneUSD = 5000; // Example: 1 milestone = $5,000
+
+  function updateImpact() {
+    const tokenId = tokenSelect.value;
+    const amount = parseFloat(donationAmount.value);
+
+    donationValue.textContent = amount;
+
+    if (!prices || !prices[tokenId]) {
+      usdValue.textContent = "N/A";
+      milestoneCount.textContent = "N/A";
+      return;
+    }
+
+    const usd = amount * prices[tokenId].usd;
+    usdValue.textContent = `$${usd.toLocaleString(undefined, {maximumFractionDigits:2})}`;
+    const milestones = Math.floor(usd / milestoneUSD);
+    milestoneCount.textContent = milestones;
+  }
+
+  donationAmount.addEventListener("input", updateImpact);
+  tokenSelect.addEventListener("change", updateImpact);
+
+  updateImpact();
+});
+document.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
+
+  // Accordion behavior
+  document.querySelectorAll(".faq-item").forEach(item => {
+    const header = item.querySelector(".faq-header");
+    const body = item.querySelector(".faq-body");
+    const icon = item.querySelector(".icon");
+
+    header.addEventListener("click", () => {
+      const expanded = !body.classList.contains("hidden");
+
+      // Close all
+      document.querySelectorAll(".faq-body").forEach(b => b.classList.add("hidden"));
+      document.querySelectorAll(".icon").forEach(i => i.style.transform = "rotate(0deg)");
+
+      // Toggle selected
+      if (!expanded) {
+        body.classList.remove("hidden");
+        icon.style.transform = "rotate(180deg)";
+      }
+    });
+  });
+
+  /* 🎉 Smart FAQ Predictor
+     Highlights the question the user is *likely* searching for based on hover + scroll time.
+  */
+  const faqItems = Array.from(document.querySelectorAll(".faq-item"));
+  const badge = document.getElementById("smart-faq-badge");
+  const highlight = document.getElementById("smart-faq-highlight");
+
+  let hoverScores = new Map();
+  faqItems.forEach((item, i) => hoverScores.set(i, 0));
+
+  faqItems.forEach((item, index) => {
+    item.addEventListener("mouseenter", () => {
+      hoverScores.set(index, hoverScores.get(index) + 3);
+      pickLikelyQuestion();
+    });
+  });
+
+  window.addEventListener("scroll", () => {
+    faqItems.forEach((item, index) => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top > 0 && rect.top < window.innerHeight * 0.7) {
+        hoverScores.set(index, hoverScores.get(index) + 1);
+      }
+    });
+    pickLikelyQuestion();
+  });
+
+  function pickLikelyQuestion() {
+    const maxEntry = [...hoverScores.entries()].sort((a,b) => b[1] - a[1])[0];
+    if (!maxEntry) return;
+
+    const likelyItem = faqItems[maxEntry[0]];
+    const title = likelyItem.querySelector("span").textContent;
+
+    highlight.textContent = title;
+    badge.classList.remove("hidden");
+  }
+
+});
+document.addEventListener("DOMContentLoaded", () => {
+    const counter = document.getElementById("liveCounter");
+    const target = 1287; // Total milestones unlocked (example)
+    let count = 0;
+
+    const duration = 2000; // total animation duration in ms
+    const startTime = performance.now();
+
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1); // 0 → 1
+        count = Math.floor(progress * target);
+        counter.textContent = count.toLocaleString();
+
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+
+    requestAnimationFrame(updateCounter);
+});
+// Enhanced Aptos Wallet Connection Implementation with SweetAlert2
+// (Fixed: merged DOMContentLoaded handlers, safe checks, no repeated lucide calls)
+
+// Wallet state management
+let walletState = {
+  connected: false,
+  address: null,
+  network: null,
+  balance: null,
+  walletName: null,
+  walletType: null,
+  walletIcon: null,
+  walletColor: null
+};
+
+// Supported Aptos Wallets
+const APTOS_WALLETS = {
+  PETRA: {
+    name: 'Petra',
+    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+    detectMethod: () => window.petra,
+    installUrl: 'https://petra.app/',
+    color: '#FF5733'
+  },
+  MARTIAN: {
+    name: 'Martian',
+    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+    detectMethod: () => window.martian,
+    installUrl: 'https://martianwallet.xyz/',
+    color: '#8B5CF6'
+  },
+  PONTEM: {
+    name: 'Pontem',
+    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19V5"/><path d="M10 19V6.8"/><path d="M14 19v-7.8"/><path d="M18 5v14"/></svg>`,
+    detectMethod: () => window.pontem,
+    installUrl: 'https://pontem.network/pontem-wallet',
+    color: '#10B981'
+  }
+};
+
+// Safe lucide helper
+function safeCreateLucideIcons() {
+  if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+    try { lucide.createIcons(); } catch (e) { console.warn('lucide.createIcons failed', e); }
+  }
+}
+
+// Initialize wallet connection on page load
+async function initWallet() {
+  console.log('Initializing wallet connection...');
+  const savedWallet = localStorage.getItem('aptosWalletConnected');
+  const savedWalletType = localStorage.getItem('aptosWalletType');
+
+  console.log('Saved wallet state:', { savedWallet, savedWalletType });
+
+  if (savedWallet === 'true' && savedWalletType) {
+    // Wait a bit for wallet extensions to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const wallet = APTOS_WALLETS[savedWalletType];
+    const walletProvider = wallet?.detectMethod();
+
+    if (walletProvider) {
+      console.log('Wallet provider detected, attempting auto-connect...');
+      await connectWallet(savedWalletType, true);
+    } else {
+      console.log('Wallet provider not found, clearing saved state');
+      // Clear saved state if wallet is not installed
+      localStorage.removeItem('aptosWalletConnected');
+      localStorage.removeItem('aptosWalletType');
+    }
+  }
+}
+
+// Show wallet selection modal
+async function showWalletSelection() {
+  const walletsHtml = Object.entries(APTOS_WALLETS).map(([key, wallet]) => {
+    const isInstalled = !!wallet.detectMethod();
+    // Use data-key and data-installed attributes; attach events in didOpen
+    return `
+      <div class="wallet-option ${isInstalled ? '' : 'wallet-not-installed'}" 
+           data-wallet-key="${key}"
+           data-installed="${isInstalled ? '1' : '0'}"
+           style="border-color: ${wallet.color}20;">
+        <div class="wallet-icon" style="background: ${wallet.color}20; color: ${wallet.color};">
+          ${wallet.iconSvg}
+        </div>
+        <div class="wallet-info">
+          <h4 style="margin: 0; color: white; font-weight: 600;">${wallet.name}</h4>
+          <p style="margin: 4px 0 0 0; color: #9CA3AF; font-size: 0.875rem;">
+            ${isInstalled ? 'Detected' : 'Not installed'}
+          </p>
+        </div>
+        <div class="wallet-status">
+          ${isInstalled ? 
+            `<i data-lucide="check-circle" style="color: ${wallet.color}; width: 20px; height: 20px;"></i>` : 
+            `<i data-lucide="download" style="color: #6B7280; width: 20px; height: 20px;"></i>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  await Swal.fire({
+    title: '<span style="color: white;">Connect Wallet</span>',
+    html: `
+      <div style="margin-bottom: 1rem;">
+        <p style="color: #9CA3AF; margin: 0 0 1.5rem 0;">
+          Connect your Aptos wallet to start donating
+        </p>
+      </div>
+      <div class="wallet-list">
+        ${walletsHtml}
+      </div>
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="color: #6B7280; font-size: 0.875rem; margin: 0;">
+          <i data-lucide="info" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+          New to Aptos? Get testnet tokens from the faucet after connecting
+        </p>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCloseButton: true,
+    background: 'rgba(0, 0, 0, 0.95)',
+    backdrop: 'rgba(0, 0, 0, 0.8)',
+    customClass: {
+      popup: 'wallet-modal-popup',
+      closeButton: 'wallet-modal-close'
+    },
+    didOpen: () => {
+      safeCreateLucideIcons();
+
+      // Attach click handlers to the wallet-option elements inside the modal
+      const popup = Swal.getPopup();
+      if (!popup) return;
+      const options = popup.querySelectorAll('.wallet-option');
+      options.forEach(opt => {
+        opt.addEventListener('click', (ev) => {
+          const key = opt.getAttribute('data-wallet-key');
+          const installed = opt.getAttribute('data-installed') === '1';
+          if (installed) {
+            // close and connect
+            Swal.close();
+            // small microtask delay so modal closes visually before connect starts
+            setTimeout(() => connectWallet(key), 50);
+          } else {
+            Swal.close();
+            setTimeout(() => installWallet(key), 50);
+          }
+        });
+      });
+    }
+  });
+}
+
+// Select and connect wallet (kept as global)
+window.selectWallet = async function(walletKey) {
+  Swal.close();
+  await connectWallet(walletKey);
+};
+
+// Install wallet
+window.installWallet = function(walletKey) {
+  const wallet = APTOS_WALLETS[walletKey];
+  Swal.fire({
+    title: `<span style="color: white;">Install ${wallet.name}</span>`,
+    html: `
+      <div style="text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem; color: ${wallet.color};">${wallet.iconSvg}</div>
+        <p style="color: #9CA3AF; margin-bottom: 1.5rem;">
+          ${wallet.name} wallet is not installed. Click below to install it.
+        </p>
+        <a href="${wallet.installUrl}" target="_blank" rel="noopener noreferrer" class="install-wallet-btn" style="
+          display: inline-block;
+          padding: 12px 32px;
+          background: linear-gradient(135deg, #22c55e, #3b82f6);
+          color: white;
+          text-decoration: none;
+          border-radius: 12px;
+          font-weight: 600;
+          transition: transform 0.3s;
+        ">
+          Install ${wallet.name}
+        </a>
+        <p style="color: #6B7280; font-size: 0.875rem; margin-top: 1rem;">
+          After installation, refresh this page to connect
+        </p>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCloseButton: true,
+    background: 'rgba(0, 0, 0, 0.95)',
+    customClass: {
+      popup: 'wallet-modal-popup'
+    },
+    didOpen: () => safeCreateLucideIcons()
+  });
+};
+
+// Main connect wallet function
+async function connectWallet(walletKey, silent = false) {
+  try {
+    const wallet = APTOS_WALLETS[walletKey];
+    const walletProvider = wallet.detectMethod();
+
+    if (!walletProvider) {
+      if (!silent) {
+        Swal.fire({
+          icon: 'error',
+          title: '<span style="color: white;">Wallet Not Found</span>',
+          text: `${wallet.name} wallet is not installed`,
+          background: 'rgba(0, 0, 0, 0.95)',
+          confirmButtonColor: '#22c55e'
+        });
+      }
+      return;
+    }
+
+    // Show connecting toast
+    if (!silent) {
+      Swal.fire({
+        title: '<span style="color: white;">Connecting...</span>',
+        html: `<p style="color: #9CA3AF;">Approve the connection in ${wallet.name}</p>`,
+        background: 'rgba(0, 0, 0, 0.95)',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    }
+
+    // Connect based on wallet type with safe checks
+    let account = null;
+    let network = null;
+
+    if (walletKey === 'PETRA' && window.petra && typeof window.petra.connect === 'function') {
+      const response = await window.petra.connect();
+      account = response?.address || response?.account || null;
+      network = (typeof window.petra.network === 'function') ? await window.petra.network() : null;
+    } else if (walletKey === 'MARTIAN' && window.martian && typeof window.martian.connect === 'function') {
+      const response = await window.martian.connect();
+      account = response?.address || response?.account || null;
+      network = (typeof window.martian.network === 'function') ? await window.martian.network() : null;
+    } else if (walletKey === 'PONTEM' && window.pontem && typeof window.pontem.connect === 'function') {
+      const response = await window.pontem.connect();
+      account = response?.address || response?.account || null;
+      network = (typeof window.pontem.network === 'function') ? await window.pontem.network() : null;
+    } else if (window.aptosWallet && typeof window.aptosWallet.connect === 'function') {
+      // generic adapter fallback
+      const response = await window.aptosWallet.connect();
+      account = response?.address || response?.account || null;
+      network = (typeof window.aptosWallet.network === 'function') ? await window.aptosWallet.network() : null;
+    }
+
+    if (!account) throw new Error('No account returned from wallet');
+
+    // Get balance (safe)
+    const balance = await getAptosBalance(account);
+
+    // Update wallet state
+    walletState = {
+      connected: true,
+      address: account,
+      network: network?.name || network || 'Testnet',
+      balance: balance,
+      walletName: wallet.name,
+      walletType: walletKey,
+      walletIcon: wallet.iconSvg,
+      walletColor: wallet.color
+    };
+
+    // Save connection state
+    localStorage.setItem('aptosWalletConnected', 'true');
+    localStorage.setItem('aptosWalletType', walletKey);
+
+    // Update UI
+    updateWalletButton('connected');
+
+    if (!silent) {
+      Swal.close();
+
+      const hasLowBalance = parseFloat(balance) < 1;
+
+      Swal.fire({
+        icon: 'success',
+        title: '<span style="color: white;">Connected!</span>',
+        html: `
+          <p style="color: #9CA3AF; margin: 0;">
+            Successfully connected to ${wallet.name}
+          </p>
+          <div style="margin-top: 1rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+            <p style="color: #22c55e; margin: 0; font-family: monospace; font-size: 0.875rem;">
+              ${formatAddress(account)}
+            </p>
+          </div>
+          ${hasLowBalance ? `
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.2);">
+              <p style="color: #fbbf24; margin: 0 0 0.5rem 0; font-size: 0.875rem;">
+                <i data-lucide="alert-circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+                Low Balance Detected
+              </p>
+              <button id="faucet-now-btn" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                Get Free Testnet Tokens 🪙
+              </button>
+            </div>
+          ` : ''}
+        `,
+        background: 'rgba(0, 0, 0, 0.95)',
+        confirmButtonColor: '#22c55e',
+        timer: hasLowBalance ? undefined : 3000,
+        timerProgressBar: !hasLowBalance,
+        didOpen: () => {
+          safeCreateLucideIcons();
+          // attach faucet button handler if present
+          const popup = Swal.getPopup();
+          if (popup) {
+            const faucetBtn = popup.querySelector('#faucet-now-btn');
+            if (faucetBtn) {
+              faucetBtn.addEventListener('click', () => {
+                requestFaucetTokens();
+                Swal.close();
+              });
+            }
+          }
+        }
+      });
+    }
+
+    console.log('Wallet connected:', walletState);
+
+  } catch (error) {
+    console.error('Wallet connection error:', error);
+
+    // Clear saved state on error
+    localStorage.removeItem('aptosWalletConnected');
+    localStorage.removeItem('aptosWalletType');
+
+    if (!silent) {
+      Swal.fire({
+        icon: 'error',
+        title: '<span style="color: white;">Connection Failed</span>',
+        text: error.message || 'Failed to connect wallet. Please try again.',
+        background: 'rgba(0, 0, 0, 0.95)',
+        confirmButtonColor: '#ef4444'
+      });
+    }
+  }
+}
+
+// Get Aptos balance (robust to no CoinStore)
+async function getAptosBalance(address) {
+  if (!address) return '0.0000';
+  try {
+    const url = `https://fullnode.testnet.aptoslabs.com/v1/accounts/${address}/resource/0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.warn('Balance fetch HTTP error', response.status);
+      return '0.0000';
+    }
+    const data = await response.json();
+    // data may not have expected shape if account never received coins
+    const raw = data?.data?.coin?.value;
+    if (!raw) return '0.0000';
+    const balance = Number(raw) / 100000000;
+    if (!isFinite(balance)) return '0.0000';
+    return balance.toFixed(4);
+  } catch (error) {
+    console.error('Balance fetch error:', error);
+    return '0.0000';
+  }
+}
+
+// Request faucet tokens
+window.requestFaucetTokens = async function() {
+  if (!walletState.connected || !walletState.address) {
+    Swal.fire({
+      icon: 'error',
+      title: '<span style="color: white;">Not Connected</span>',
+      text: 'Please connect your wallet first',
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e'
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: '<span style="color: white;">Requesting Testnet Tokens...</span>',
+    html: `
+      <div style="text-align: center;">
+        <div style="margin: 1rem 0;">
+          <i data-lucide="coins" style="width: 48px; height: 48px; color: #fbbf24;"></i>
+        </div>
+        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+          Sending 1 APT to your wallet from the Aptos testnet faucet...
+        </p>
+        <div style="padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.2);">
+          <code style="color: #fbbf24; font-family: monospace; font-size: 0.875rem; word-break: break-all;">
+            ${walletState.address}
+          </code>
+        </div>
+      </div>
+    `,
+    background: 'rgba(0, 0, 0, 0.95)',
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+      safeCreateLucideIcons();
+    }
+  });
+
+  try {
+    const response = await fetch('https://faucet.testnet.aptoslabs.com/mint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address: walletState.address,
+        amount: 100000000 // 1 APT in Octas
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Faucet request failed');
+    }
+
+    await response.json();
+
+    // Wait a bit for the transaction to be processed
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Refresh balance
+    const newBalance = await getAptosBalance(walletState.address);
+    walletState.balance = newBalance;
+
+    Swal.fire({
+      icon: 'success',
+      title: '<span style="color: white;">Tokens Received! 🎉</span>',
+      html: `
+        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+          Successfully received 1 APT from the testnet faucet
+        </p>
+        <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1)); border-radius: 12px; border: 1px solid rgba(34,197,94,0.2);">
+          <p style="margin: 0 0 8px 0; color: #9CA3AF; font-size: 0.875rem;">New Balance</p>
+          <p style="margin: 0; color: white; font-size: 2rem; font-weight: bold;">
+            ${newBalance} <span style="font-size: 1rem; color: #9CA3AF;">APT</span>
+          </p>
+        </div>
+        <p style="color: #6B7280; font-size: 0.875rem; margin-top: 1rem;">
+          You can request more tokens every 24 hours
+        </p>
+      `,
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e',
+      confirmButtonText: 'Great!'
+    });
+
+  } catch (error) {
+    console.error('Faucet error:', error);
+
+    Swal.fire({
+      icon: 'error',
+      title: '<span style="color: white;">Faucet Request Failed</span>',
+      html: `
+        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+          ${error.message || 'Unable to get tokens from faucet. You may have reached the daily limit.'}
+        </p>
+        <p style="color: #6B7280; font-size: 0.875rem;">
+          Try the official faucet at 
+          <a href="https://aptosfaucet.com/" target="_blank" rel="noopener noreferrer" style="color: #22c55e; text-decoration: none;">
+            aptosfaucet.com
+          </a>
+        </p>
+      `,
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e'
+    });
+  }
+};
+
+// Disconnect wallet
+async function disconnectWallet() {
+  const result = await Swal.fire({
+    title: '<span style="color: white;">Disconnect Wallet?</span>',
+    text: 'Are you sure you want to disconnect your wallet?',
+    icon: 'warning',
+    showCancelButton: true,
+    background: 'rgba(0, 0, 0, 0.95)',
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#6B7280',
+    confirmButtonText: 'Yes, disconnect',
+    cancelButtonText: 'Cancel'
+  });
+
+  if (result.isConfirmed) {
+    try {
+      // Disconnect from wallet provider safely (not all providers implement disconnect)
+      if (walletState.walletType === 'PETRA' && window.petra && typeof window.petra.disconnect === 'function') {
+        await window.petra.disconnect().catch(() => {});
+      } else if (walletState.walletType === 'MARTIAN' && window.martian && typeof window.martian.disconnect === 'function') {
+        await window.martian.disconnect().catch(() => {});
+      } else if (walletState.walletType === 'PONTEM' && window.pontem && typeof window.pontem.disconnect === 'function') {
+        await window.pontem.disconnect().catch(() => {});
+      } else if (window.aptosWallet && typeof window.aptosWallet.disconnect === 'function') {
+        await window.aptosWallet.disconnect().catch(() => {});
+      }
+    } catch (error) {
+      console.error('Disconnect error:', error);
+    }
+
+    // Reset state
+    walletState = {
+      connected: false,
+      address: null,
+      network: null,
+      balance: null,
+      walletName: null,
+      walletType: null,
+      walletIcon: null,
+      walletColor: null
+    };
+
+    localStorage.removeItem('aptosWalletConnected');
+    localStorage.removeItem('aptosWalletType');
+
+    updateWalletButton('disconnected');
+
+    Swal.fire({
+      icon: 'success',
+      title: '<span style="color: white;">Disconnected</span>',
+      text: 'Wallet disconnected successfully',
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e',
+      timer: 2000
+    });
+  }
+}
+
+// Format address for display
+function formatAddress(address) {
+  if (!address) return '';
+  if (address.length <= 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+// Update wallet button UI
+function updateWalletButton(state) {
+  const walletButtons = document.querySelectorAll('.primary-btn');
+
+  walletButtons.forEach(button => {
+    const buttonText = button.querySelector('span');
+    const buttonIcon = button.querySelector('i[data-lucide]');
+
+    if (!buttonText) return;
+
+    switch(state) {
+      case 'connected':
+        buttonText.textContent = formatAddress(walletState.address);
+        button.disabled = false;
+        button.style.background = 'linear-gradient(135deg, #10b981, #3b82f6)';
+
+        button.onclick = (e) => {
+          e.preventDefault();
+          showWalletDetails();
+        };
+
+        if (buttonIcon) {
+          buttonIcon.setAttribute('data-lucide', 'user-circle');
+          safeCreateLucideIcons();
+        }
+        break;
+
+      case 'disconnected':
+      default:
+        buttonText.textContent = 'Connect Wallet';
+        button.disabled = false;
+        button.style.background = 'linear-gradient(135deg, #22c55e, #3b82f6)';
+
+        button.onclick = (e) => {
+          e.preventDefault();
+          showWalletSelection();
+        };
+
+        if (buttonIcon) {
+          buttonIcon.setAttribute('data-lucide', 'wallet');
+          safeCreateLucideIcons();
+        }
+        break;
+    }
+  });
+}
+
+// Show wallet details modal
+async function showWalletDetails() {
+  // Refresh balance
+  walletState.balance = await getAptosBalance(walletState.address);
+  const hasLowBalance = parseFloat(walletState.balance) < 1;
+
+  Swal.fire({
+    title: '<span style="color: white;">Your Wallet</span>',
+    html: `
+      <div style="text-align: left;">
+        <!-- Wallet Info -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+          <div style="color: ${walletState.walletColor || '#fff'};">${walletState.walletIcon || ''}</div>
+          <div>
+            <h4 style="margin: 0; color: white;">${walletState.walletName || 'Wallet'}</h4>
+            <p style="margin: 4px 0 0 0; color: #22c55e; font-size: 0.875rem;">
+              <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 6px;"></span>
+              Connected
+            </p>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <p style="margin: 0 0 8px 0; color: #9CA3AF; font-size: 0.875rem;">Address</p>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <code style="color: white; font-family: monospace; font-size: 0.875rem;">${formatAddress(walletState.address)}</code>
+            <button id="copy-address-btn" style="padding: 6px 12px; background: rgba(34,197,94,0.2); border: none; border-radius: 8px; color: #22c55e; cursor: pointer; font-size: 0.75rem; font-weight: 600;">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Balance -->
+        <div style="margin-bottom: 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1)); border-radius: 12px; border: 1px solid rgba(34,197,94,0.2);">
+          <p style="margin: 0 0 8px 0; color: #9CA3AF; font-size: 0.875rem;">Balance</p>
+          <p style="margin: 0; color: white; font-size: 2rem; font-weight: bold;">${walletState.balance} <span style="font-size: 1rem; color: #9CA3AF;">APT</span></p>
+        </div>
+
+        <!-- Network -->
+        <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <p style="margin: 0 0 8px 0; color: #9CA3AF; font-size: 0.875rem;">Network</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="display: inline-block; width: 8px; height: 8px; background: #fbbf24; border-radius: 50%;"></span>
+            <p style="margin: 0; color: white; font-weight: 600;">${walletState.network || 'Testnet'}</p>
+          </div>
+        </div>
+
+        ${hasLowBalance ? `
+          <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.2);">
+            <p style="color: #fbbf24; margin: 0 0 0.5rem 0; font-size: 0.875rem;">
+              <i data-lucide="alert-circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+              Low balance - Get free testnet tokens
+            </p>
+          </div>
+        ` : ''}
+
+        <!-- Actions -->
+        <div style="display: grid; gap: 0.75rem;">
+          ${hasLowBalance ? `
+            <button id="get-tokens-btn" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+              <i data-lucide="coins" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+              Get Testnet Tokens (1 APT)
+            </button>
+          ` : ''}
+
+          <button id="view-explorer-btn" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+            <i data-lucide="external-link" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+            View on Explorer
+          </button>
+
+          <button id="disconnect-btn" style="width: 100%; padding: 12px; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+            <i data-lucide="log-out" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+            Disconnect Wallet
+          </button>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCloseButton: true,
+    background: 'rgba(0, 0, 0, 0.95)',
+    customClass: {
+      popup: 'wallet-modal-popup wallet-details-modal'
+    },
+    width: '480px',
+    didOpen: () => {
+      safeCreateLucideIcons();
+      const popup = Swal.getPopup();
+      if (!popup) return;
+
+      const copyBtn = popup.querySelector('#copy-address-btn');
+      if (copyBtn) copyBtn.addEventListener('click', () => {
+        navigator.clipboard?.writeText(walletState.address || '').then(() => {
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Address copied!', showConfirmButton: false, timer: 1500, background: 'rgba(0,0,0,0.95)' });
+        }).catch(() => {
+          Swal.fire({ icon: 'error', title: 'Copy failed', text: 'Unable to copy address' });
+        });
+      });
+
+      const faucetBtn = popup.querySelector('#get-tokens-btn');
+      if (faucetBtn) faucetBtn.addEventListener('click', () => {
+        requestFaucetTokens();
+        Swal.close();
+      });
+
+      const explorerBtn = popup.querySelector('#view-explorer-btn');
+      if (explorerBtn) explorerBtn.addEventListener('click', () => {
+        window.open(`https://explorer.aptoslabs.com/account/${walletState.address}?network=testnet`, '_blank');
+      });
+
+      const disconnectBtn = popup.querySelector('#disconnect-btn');
+      if (disconnectBtn) disconnectBtn.addEventListener('click', () => {
+        Swal.close();
+        disconnectWallet();
+      });
+    }
+  });
+}
+
+// Open explorer (kept as global)
+window.openExplorer = function() {
+  if (!walletState.address) return;
+  window.open(`https://explorer.aptoslabs.com/account/${walletState.address}?network=testnet`, '_blank');
+};
+
+// Disconnect from modal (kept as global helper)
+window.disconnectFromModal = function() {
+  Swal.close();
+  disconnectWallet();
+};
+
+// Add custom styles (unchanged)
+const style = document.createElement('style');
+style.textContent = `
+  .wallet-modal-popup {
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem !important;
+  }
+  .wallet-modal-close {
+    color: #9CA3AF !important;
+    font-size: 1.5rem !important;
+  }
+  .wallet-modal-close:hover { color: white !important; }
+  .wallet-list { display: grid; gap: 1rem; }
+  .wallet-option { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 16px; cursor: pointer; transition: all 0.3s; }
+  .wallet-option:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(34, 197, 94, 0.5) !important; transform: translateY(-2px); }
+  .wallet-not-installed { opacity: 0.6; } .wallet-not-installed:hover { opacity: 1; }
+  .wallet-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+  .wallet-icon svg { width: 32px; height: 32px; }
+  .wallet-info { flex: 1; text-align: left; }
+  .wallet-status { display: flex; align-items: center; }
+  .wallet-details-modal { max-width: 480px !important; }
+  .swal2-html-container { overflow-y: visible !important; }
+  button:active { transform: scale(0.98) !important; }
+`;
+document.head.appendChild(style);
+
+// Listen for account changes (wallet switching)
+function setupWalletListeners() {
+  if (window.petra && typeof window.petra.onAccountChange === 'function') {
+    try {
+      window.petra.onAccountChange((newAccount) => {
+        if (newAccount && walletState.connected && walletState.walletType === 'PETRA') {
+          console.log('Account changed:', newAccount);
+          walletState.address = newAccount.address || newAccount;
+          updateWalletButton('connected');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Account changed', text: formatAddress(walletState.address), showConfirmButton: false, timer: 3000, background: 'rgba(0, 0, 0, 0.95)' });
+        }
+      });
+    } catch (e) {
+      console.warn('petra onAccountChange attach failed', e);
+    }
+
+    try {
+      if (typeof window.petra.onNetworkChange === 'function') {
+        window.petra.onNetworkChange((newNetwork) => {
+          if (newNetwork && walletState.connected && walletState.walletType === 'PETRA') {
+            console.log('Network changed:', newNetwork);
+            walletState.network = newNetwork.name || newNetwork;
+            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Network changed', text: walletState.network, showConfirmButton: false, timer: 3000, background: 'rgba(0, 0, 0, 0.95)' });
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('petra onNetworkChange attach failed', e);
+    }
+  }
+
+  // Martian listeners
+  if (window.martian && typeof window.martian.onAccountChange === 'function') {
+    try {
+      window.martian.onAccountChange((newAccount) => {
+        if (newAccount && walletState.connected && walletState.walletType === 'MARTIAN') {
+          walletState.address = newAccount.address || newAccount;
+          updateWalletButton('connected');
+        }
+      });
+    } catch (e) { console.warn('martian listener attach failed', e); }
+  }
+
+  // Pontem listeners
+  if (window.pontem && typeof window.pontem.onAccountChange === 'function') {
+    try {
+      window.pontem.onAccountChange((newAccount) => {
+        if (newAccount && walletState.connected && walletState.walletType === 'PONTEM') {
+          walletState.address = newAccount.address || newAccount;
+          updateWalletButton('connected');
+        }
+      });
+    } catch (e) { console.warn('pontem listener attach failed', e); }
+  }
+}
+
+// Initialize on page load (single listener)
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing wallet...');
+
+  // Setup wallet listeners
+  setupWalletListeners();
+
+  // Initialize wallet connection
+  initWallet();
+
+  // Add click handlers to all Connect Wallet buttons (if any)
+  const walletButtons = document.querySelectorAll('.primary-btn');
+  walletButtons.forEach(button => {
+    const buttonText = button.querySelector('span');
+    // if no span, still attach default behavior
+    const shouldAttach = !buttonText || (buttonText && (buttonText.textContent.includes('Connect Wallet') || buttonText.textContent.includes('...')));
+    if (shouldAttach) {
+      button.onclick = (e) => {
+        e.preventDefault();
+        if (walletState.connected) {
+          showWalletDetails();
+        } else {
+          showWalletSelection();
+        }
+      };
+    }
+  });
+
+  // Status indicator: check existence
+  const statusIndicator = document.getElementById('wallet-status-indicator');
+  // Check wallet status periodically but safely (no repeated icon recreation)
+  setInterval(() => {
+    try {
+      const isConnected = !!(window.aptosWallet && typeof window.aptosWallet.isConnected === 'function' ? window.aptosWallet.isConnected() : walletState.connected);
+      if (statusIndicator) {
+        if (!isConnected) statusIndicator.classList.add('show');
+        else statusIndicator.classList.remove('show');
+      }
+    } catch (e) {
+      // swallow errors - interval should be resilient
+    }
+  }, 1000);
+
+  // Initial lucide creation once
+  safeCreateLucideIcons();
+});
+
+// Export for global use
+window.aptosWallet = {
+  connect: showWalletSelection,
+  disconnect: disconnectWallet,
+  getState: () => walletState,
+  isConnected: () => walletState.connected,
+  requestFaucet: requestFaucetTokens,
+  getBalance: () => walletState.balance
+};
+
+
+// Aptos Testnet Donation System - Always Functional Buttons (fixed)
+
+// Donation configuration
+const DONATION_CONFIG = {
+  // Test recipient address (replace with your actual testnet address)
+  RECIPIENT_ADDRESS: '0x1', // Replace this with your actual testnet wallet address
+  MIN_DONATION: 0.01, // Minimum donation in APT
+  MAX_DONATION: 1000, // Maximum donation in APT
+  GAS_UNIT_PRICE: 100, // Gas price in Octas (not currently used but kept)
+  MAX_GAS_AMOUNT: 10000 // Max gas units (not currently used but kept)
+};
+
+// Track donation state
+let donationState = {
+  amount: null,
+  recipient: null,
+  inProgress: false
+};
+
+// Utility: safe lucide create
+function safeCreateLucideIcons() {
+  if (typeof lucide !== 'undefined' && lucide && lucide.createIcons) {
+    try { lucide.createIcons(); } catch (e) { console.warn('lucide.createIcons failed', e); }
+  }
+}
+
+// Initialize donation system
+function initDonationSystem() {
+  console.log('Donation system initialized');
+  setupButtonHandlers();
+}
+
+// Setup button handlers - buttons are ALWAYS clickable
+function setupButtonHandlers() {
+  // Start Donating button
+  const startDonatingBtn = document.querySelector('.get-started-btn');
+  if (startDonatingBtn) {
+    startDonatingBtn.style.opacity = '1';
+    startDonatingBtn.style.cursor = 'pointer';
+    startDonatingBtn.removeAttribute('disabled');
+    startDonatingBtn.style.pointerEvents = 'auto';
+
+    startDonatingBtn.onclick = (e) => {
+      e.preventDefault();
+      handleStartDonating();
+    };
+  }
+
+  // Create Cause button
+  const createCauseBtn = document.querySelector('.secondary-btn');
+  if (createCauseBtn) {
+    createCauseBtn.style.opacity = '1';
+    createCauseBtn.style.cursor = 'pointer';
+    createCauseBtn.removeAttribute('disabled');
+    createCauseBtn.style.pointerEvents = 'auto';
+
+    createCauseBtn.onclick = (e) => {
+      e.preventDefault();
+      handleCreateCause();
+    };
+  }
+
+  console.log('Button handlers attached');
+}
+
+// Robust check if wallet is connected
+function isWalletConnected() {
+  try {
+    const w = window.aptosWallet;
+    if (!w) return false;
+
+    // Support boolean property
+    if (typeof w.isConnected === 'boolean') return w.isConnected;
+
+    // Support function that returns boolean or promise
+    if (typeof w.isConnected === 'function') {
+      const res = w.isConnected();
+      // If function returns promise, assume not connected synchronously
+      if (res && typeof res.then === 'function') {
+        // we can't await here — treat as false and let connect flow handle it
+        return false;
+      }
+      return !!res;
+    }
+
+    // Support adapter style: connected property or isConnected property on adapter
+    if (w.connected !== undefined) return !!w.connected;
+
+    return false;
+  } catch (e) {
+    console.warn('isWalletConnected error', e);
+    return false;
+  }
+}
+
+// Show connect wallet prompt
+async function showConnectWalletPrompt(actionName = 'perform this action') {
+  const result = await Swal.fire({
+    icon: 'warning',
+    title: '<span style="color: white;">Connect Your Wallet</span>',
+    html: `
+      <div style="text-align: center;">
+        <div style="margin: 1.5rem 0;">
+          <i data-lucide="wallet" style="width: 64px; height: 64px; color: #22c55e;"></i>
+        </div>
+        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+          You need to connect your Aptos wallet to ${actionName}.
+        </p>
+        <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+          <p style="color: #22c55e; margin: 0; font-size: 0.875rem;">
+            <i data-lucide="shield-check" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+            Your wallet keeps your funds secure and enables blockchain transactions
+          </p>
+        </div>
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: '<i data-lucide="wallet" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 8px;"></i> Connect Wallet',
+    cancelButtonText: 'Cancel',
+    background: 'rgba(0, 0, 0, 0.95)',
+    confirmButtonColor: '#22c55e',
+    cancelButtonColor: '#6B7280',
+    customClass: {
+      popup: 'wallet-modal-popup'
+    },
+    didOpen: () => {
+      safeCreateLucideIcons();
+    }
+  });
+
+  if (result.isConfirmed) {
+    // Try to connect using known wallet APIs
+    try {
+      if (window.aptosWallet && typeof window.aptosWallet.connect === 'function') {
+        await window.aptosWallet.connect();
+        return true;
+      } else if (window.connectAptosWallet && typeof window.connectAptosWallet === 'function') {
+        // fallback if your app exposes a connect helper
+        await window.connectAptosWallet();
+        return true;
+      } else {
+        console.warn('No aptos wallet connect function found on window');
+        return false;
+      }
+    } catch (e) {
+      console.error('Wallet connect failed', e);
+      return false;
+    }
+  }
+
+  return false;
+}
+
+// Handle Start Donating button - ALWAYS works
+async function handleStartDonating() {
+  console.log('Start Donating clicked');
+
+  // Check if wallet is connected
+  if (!isWalletConnected()) {
+    console.log('Wallet not connected, showing prompt...');
+    const connected = await showConnectWalletPrompt('start donating');
+
+    if (!connected) {
+      return; // User cancelled or connection failed
+    }
+
+    // Wait a moment for wallet state to update
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  // Wallet is connected, show donation modal
+  showDonationModal();
+}
+
+// Handle Create Cause button - ALWAYS works
+async function handleCreateCause() {
+  console.log('Create Cause clicked');
+
+  // Check if wallet is connected
+  if (!isWalletConnected()) {
+    console.log('Wallet not connected, showing prompt...');
+    const connected = await showConnectWalletPrompt('create a cause');
+
+    if (!connected) {
+      return; // User cancelled
+    }
+
+    // Wait a moment for wallet state to update
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  // Wallet is connected, show create cause modal
+  showCreateCauseModal();
+}
+
+// Show create cause modal
+function showCreateCauseModal() {
+  Swal.fire({
+    icon: 'info',
+    title: '<span style="color: white;">Create a Cause</span>',
+    html: `
+      <div style="text-align: center;">
+        <div style="margin: 1.5rem 0;">
+          <i data-lucide="plus-circle" style="width: 64px; height: 64px; color: #3b82f6;"></i>
+        </div>
+        <p style="color: #9CA3AF; margin-bottom: 1rem;">
+          Create and manage your own causes with milestone-based funding.
+        </p>
+        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2);">
+          <p style="color: #3b82f6; margin: 0; font-size: 0.875rem;">
+            <i data-lucide="rocket" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+            This feature is coming soon! Stay tuned.
+          </p>
+        </div>
+      </div>
+    `,
+    background: 'rgba(0, 0, 0, 0.95)',
+    confirmButtonColor: '#22c55e',
+    confirmButtonText: 'Got it!',
+    didOpen: () => {
+      safeCreateLucideIcons();
+    }
+  });
+}
+
+// Show donation modal (improved: use Swal.getPopup() to access inputs; attach event listeners in didOpen)
+async function showDonationModal() {
+  // Get wallet info safely
+  let walletState = {};
+  try {
+    if (window.aptosWallet && typeof window.aptosWallet.getState === 'function') {
+      walletState = window.aptosWallet.getState() || {};
+    } else if (window.getAptosWalletState && typeof window.getAptosWalletState === 'function') {
+      walletState = await window.getAptosWalletState();
+    }
+  } catch (e) {
+    console.warn('Failed to get wallet state', e);
+    walletState = {};
+  }
+
+  const balance = parseFloat(walletState.balance) || 0;
+  const walletAddress = walletState.address || '';
+
+  const { value: formValues } = await Swal.fire({
+    title: '<span style="color: white;">Make a Donation</span>',
+    html: `
+      <div style="text-align: left;">
+        <!-- Wallet Info -->
+        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="color: #9CA3AF; font-size: 0.875rem;">Your Balance</span>
+            <span style="color: #22c55e; font-size: 1.25rem; font-weight: bold;">
+              ${balance.toFixed(4)} APT
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #9CA3AF; font-size: 0.75rem;">Wallet</span>
+            <code style="color: #22c55e; font-size: 0.75rem; font-family: monospace;">
+              ${formatAddress(walletAddress)}
+            </code>
+          </div>
+        </div>
+
+        ${balance < 0.1 ? `
+          <div id="low-balance-box" style="margin-bottom: 1rem; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.2);">
+            <p style="color: #fbbf24; margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">
+              <i data-lucide="alert-circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+              Low Balance
+            </p>
+            <button id="request-faucet-btn" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; font-size: 0.875rem;">
+              <i data-lucide="coins" style="width: 14px; height: 14px; display: inline; vertical-align: middle"></i>
+              Get Free Testnet Tokens
+            </button>
+          </div>
+        ` : ''}
+
+        <!-- Amount Input -->
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+            <i data-lucide="coins" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            Donation Amount (APT)
+          </label>
+          <input 
+            id="donation-amount" 
+            type="number" 
+            step="0.01" 
+            min="${DONATION_CONFIG.MIN_DONATION}" 
+            max="${Math.min(balance, DONATION_CONFIG.MAX_DONATION)}"
+            placeholder="0.00"
+            style="width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-size: 1.5rem; font-weight: 600; text-align: center; transition: all 0.3s;"
+          />
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+            <button type="button" class="quick-amt-btn" data-amt="0.1" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #9CA3AF; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+              0.1 APT
+            </button>
+            <button type="button" class="quick-amt-btn" data-amt="0.5" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #9CA3AF; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+              0.5 APT
+            </button>
+            <button type="button" class="quick-amt-btn" data-amt="1" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #9CA3AF; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+              1 APT
+            </button>
+          </div>
+        </div>
+
+        <!-- Recipient Address -->
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+            <i data-lucide="user" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            Recipient Address
+          </label>
+          <input 
+            id="recipient-address" 
+            type="text" 
+            value="${DONATION_CONFIG.RECIPIENT_ADDRESS || ''}"
+            placeholder="0x..."
+            style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-family: monospace; font-size: 0.875rem;"
+          />
+          <p style="color: #6B7280; font-size: 0.75rem; margin: 0.5rem 0 0 0;">
+            <i data-lucide="info" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i>
+            Testnet transaction - This uses test tokens, not real money
+          </p>
+        </div>
+
+        <!-- Message (Optional) -->
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem; font-weight: 600;">
+            <i data-lucide="message-square" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            Message (Optional)
+          </label>
+          <textarea 
+            id="donation-message" 
+            placeholder="Leave a message with your donation..."
+            rows="3"
+            style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-size: 0.875rem; resize: none;"
+          ></textarea>
+        </div>
+
+        <!-- Info Banner -->
+        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2);">
+          <p style="color: #3B82F6; margin: 0; font-size: 0.875rem;">
+            <i data-lucide="shield" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+            Secured by Aptos blockchain - Your transaction will be permanent and transparent
+          </p>
+        </div>
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: '<i data-lucide="send" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 8px;"></i> Send Donation',
+    cancelButtonText: 'Cancel',
+    background: 'rgba(0, 0, 0, 0.95)',
+    confirmButtonColor: '#22c55e',
+    cancelButtonColor: '#6B7280',
+    customClass: { popup: 'wallet-modal-popup' },
+    width: '540px',
+    // Use preConfirm that reads inputs from the actual popup DOM (Safer than document.getElementById)
+    preConfirm: () => {
+      const popup = Swal.getPopup();
+      if (!popup) {
+        Swal.showValidationMessage('Modal not found');
+        return false;
+      }
+      const amountEl = popup.querySelector('#donation-amount');
+      const recipientEl = popup.querySelector('#recipient-address');
+      const messageEl = popup.querySelector('#donation-message');
+
+      const amount = amountEl ? amountEl.value : '';
+      const recipient = recipientEl ? recipientEl.value.trim() : '';
+      const message = messageEl ? messageEl.value.trim() : '';
+
+      const amtFloat = parseFloat(amount);
+      if (!amount || isNaN(amtFloat) || amtFloat <= 0) {
+        Swal.showValidationMessage('Please enter a valid amount');
+        return false;
+      }
+
+      if (amtFloat < DONATION_CONFIG.MIN_DONATION) {
+        Swal.showValidationMessage(`Minimum donation is ${DONATION_CONFIG.MIN_DONATION} APT`);
+        return false;
+      }
+
+      if (amtFloat > balance) {
+        Swal.showValidationMessage('Insufficient balance. Get testnet tokens first!');
+        return false;
+      }
+
+      if (!recipient || !recipient.startsWith('0x')) {
+        Swal.showValidationMessage('Please enter a valid recipient address (starts with 0x)');
+        return false;
+      }
+
+      return { amount: amtFloat, recipient, message };
+    },
+    didOpen: () => {
+      safeCreateLucideIcons();
+
+      // Focus on amount input
+      const popup = Swal.getPopup();
+      if (!popup) return;
+
+      const amountInput = popup.querySelector('#donation-amount');
+      if (amountInput) amountInput.focus();
+
+      // Attach quick amount button listeners
+      const quickBtns = popup.querySelectorAll('.quick-amt-btn');
+      quickBtns.forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+          const val = btn.getAttribute('data-amt');
+          if (!val) return;
+          setDonationAmount(parseFloat(val));
+        });
+      });
+
+      // Attach faucet request handler if present
+      const faucetBtn = popup.querySelector('#request-faucet-btn');
+      if (faucetBtn) {
+        faucetBtn.addEventListener('click', async () => {
+          // Close the modal and open faucet flow
+          Swal.close();
+          await window.requestTestnetTokens?.();
+        });
+      }
+    }
+  });
+
+  if (formValues) {
+    await processDonation(formValues);
+  }
+}
+
+// Format address helper
+function formatAddress(address) {
+  if (!address) return '';
+  if (address.length < 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+// Request testnet tokens
+window.requestTestnetTokens = async function() {
+  try {
+    Swal.close();
+  } catch (e) {}
+
+  if (window.aptosWallet && typeof window.aptosWallet.requestFaucet === 'function') {
+    try {
+      await window.aptosWallet.requestFaucet();
+      return;
+    } catch (e) {
+      console.warn('aptosWallet.requestFaucet failed', e);
+    }
+  }
+
+  if (typeof window.requestFaucetTokens === 'function') {
+    try {
+      await window.requestFaucetTokens();
+      return;
+    } catch (e) {
+      console.warn('requestFaucetTokens failed', e);
+    }
+  }
+
+  // Default fallback opens Aptos faucet in a new tab
+  Swal.fire({
+    icon: 'info',
+    title: '<span style="color: white;">Get Testnet Tokens</span>',
+    html: `
+      <p style="color: #9CA3AF; margin-bottom: 1rem;">
+        Visit the Aptos faucet to get free testnet tokens
+      </p>
+      <a id="open-faucet-link" href="https://faucet.aptoslabs.com/" target="_blank" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #22c55e, #3b82f6); color: white; text-decoration: none; border-radius: 12px; font-weight: 600;">
+        Open Faucet
+      </a>
+    `,
+    background: 'rgba(0, 0, 0, 0.95)',
+    confirmButtonColor: '#22c55e'
+  });
+
+  safeCreateLucideIcons();
+};
+
+// Set quick donation amount (global so didOpen can call it)
+window.setDonationAmount = function(amount) {
+  // Because donation input exists inside a Swal popup, we need to query it from the popup
+  const popup = Swal.getPopup();
+  if (!popup) {
+    console.warn('Donation popup not present when setting amount');
+    return;
+  }
+  const input = popup.querySelector('#donation-amount');
+  if (input) {
+    input.value = amount;
+    input.focus();
+
+    // Visual feedback
+    input.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+    setTimeout(() => {
+      input.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+    }, 300);
+  }
+};
+
+// Process the donation transaction
+async function processDonation(donationData) {
+  if (donationState.inProgress) {
+    Swal.fire({
+      icon: 'warning',
+      title: '<span style="color: white;">Transaction in Progress</span>',
+      text: 'Please wait for the current transaction to complete',
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e'
+    });
+    return;
+  }
+
+  donationState.inProgress = true;
+  donationState.amount = donationData.amount;
+  donationState.recipient = donationData.recipient;
+
+  // Show processing modal
+  Swal.fire({
+    title: '<span style="color: white;">Processing Donation...</span>',
+    html: `
+      <div style="text-align: center;">
+        <div style="margin: 1.5rem 0;">
+          <i data-lucide="loader" class="spinning-icon" style="width: 56px; height: 56px; color: #22c55e;"></i>
+        </div>
+        <div style="padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2); margin-bottom: 1rem;">
+          <p style="color: #22c55e; margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: bold;">
+            ${donationData.amount} APT
+          </p>
+          <p style="color: #9CA3AF; margin: 0; font-size: 0.875rem;">
+            to ${formatAddress(donationData.recipient)}
+          </p>
+        </div>
+        <div style="padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px;">
+          <p style="color: #6B7280; margin: 0; font-size: 0.875rem;">
+            <i data-lucide="info" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+            Please approve the transaction in your wallet popup
+          </p>
+        </div>
+      </div>
+    `,
+    background: 'rgba(0, 0, 0, 0.95)',
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      safeCreateLucideIcons();
+
+      // Add spinning animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .spinning-icon {
+          animation: spin 1s linear infinite;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  });
+
+  try {
+    // get wallet state again to find the walletType (if available)
+    let walletState = {};
+    try {
+      if (window.aptosWallet && typeof window.aptosWallet.getState === 'function') {
+        walletState = window.aptosWallet.getState() || {};
+      }
+    } catch (e) {
+      console.warn('Could not read wallet state before sending tx', e);
+    }
+
+    const walletType = walletState.walletType || (window.aptosWallet && window.aptosWallet.name) || '';
+
+    const pendingTransaction = await sendAptosTransaction(
+      walletType,
+      donationData.recipient,
+      donationData.amount
+    );
+
+    donationState.inProgress = false;
+
+    // Extract transaction hash robustly (different wallets return different shapes)
+    const txHash = (pendingTransaction && (pendingTransaction.hash || pendingTransaction.result?.hash || pendingTransaction.transaction_hash)) || null;
+
+    // If waitForTransaction wasn't resolving the actual on-chain object, try to use pendingTransaction directly
+    const displayHash = txHash || (pendingTransaction && pendingTransaction.hash) || 'unknown-hash';
+
+    // Show success
+    Swal.fire({
+      icon: 'success',
+      title: '<span style="color: white;">Donation Successful! 🎉</span>',
+      html: `
+        <div style="text-align: center;">
+          <div style="margin: 1rem 0;">
+            <i data-lucide="check-circle" style="width: 64px; height: 64px; color: #22c55e;"></i>
+          </div>
+          
+          <div style="padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2); margin-bottom: 1rem;">
+            <p style="color: #9CA3AF; margin: 0 0 0.5rem 0; font-size: 0.875rem;">Donation Amount</p>
+            <p style="color: #22c55e; margin: 0; font-size: 2rem; font-weight: bold;">
+              ${donationData.amount} APT
+            </p>
+          </div>
+          
+          ${donationData.message ? `
+            <div style="padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px; margin-bottom: 1rem;">
+              <p style="color: #9CA3AF; margin: 0 0 0.5rem 0; font-size: 0.875rem;">Your Message</p>
+              <p style="color: white; margin: 0; font-style: italic; font-size: 0.875rem;">
+                "${escapeHtml(donationData.message)}"
+              </p>
+            </div>
+          ` : ''}
+
+          <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 1rem;">
+            <p style="color: #3B82F6; margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">
+              <i data-lucide="hash" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i>
+              Transaction Hash
+            </p>
+            <code style="color: white; font-family: monospace; font-size: 0.75rem; word-break: break-all; display: block;">
+              ${displayHash}
+            </code>
+          </div>
+
+          <button id="view-on-explorer-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #22c55e, #3b82f6); border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s;">
+            <i data-lucide="external-link" style="width: 18px; height: 18px; display: inline; vertical-align: middle;"></i>
+            View on Aptos Explorer
+          </button>
+        </div>
+      `,
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#22c55e',
+      confirmButtonText: 'Done',
+      didOpen: () => {
+        safeCreateLucideIcons();
+
+        const btn = Swal.getPopup()?.querySelector('#view-on-explorer-btn');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const url = `https://explorer.aptoslabs.com/txn/${displayHash}?network=testnet`;
+            window.open(url, '_blank');
+          });
+        }
+      }
+    });
+
+    // Refresh balance after a delay
+    setTimeout(async () => {
+      if (window.aptosWallet && typeof window.aptosWallet.getState === 'function') {
+        const state = window.aptosWallet.getState();
+        if (state && state.address && typeof window.getAptosBalance === 'function') {
+          try {
+            const newBalance = await window.getAptosBalance(state.address);
+            console.log('Balance updated:', newBalance);
+          } catch (e) {
+            console.warn('Failed to refresh balance', e);
+          }
+        }
+      }
+    }, 3000);
+
+  } catch (error) {
+    donationState.inProgress = false;
+    console.error('Donation error:', error);
+
+    Swal.fire({
+      icon: 'error',
+      title: '<span style="color: white;">Transaction Failed</span>',
+      html: `
+        <div style="text-align: center;">
+          <div style="margin: 1rem 0;">
+            <i data-lucide="x-circle" style="width: 64px; height: 64px; color: #ef4444;"></i>
+          </div>
+          <p style="color: #9CA3AF; margin-bottom: 1rem;">
+            ${escapeHtml(error.message || 'Failed to process donation. Please try again.')}
+          </p>
+          <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <p style="color: #ef4444; margin: 0; font-size: 0.875rem;">
+              <i data-lucide="alert-circle" style="width: 16px; height: 16px; display: inline; vertical-align: middle;"></i>
+              Common issues: Transaction rejected, insufficient balance, or network error
+            </p>
+          </div>
+        </div>
+      `,
+      background: 'rgba(0, 0, 0, 0.95)',
+      confirmButtonColor: '#ef4444',
+      confirmButtonText: 'Try Again',
+      didOpen: () => {
+        safeCreateLucideIcons();
+      }
+    });
+  }
+}
+
+// Escape HTML helper for user messages
+function escapeHtml(unsafe) {
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Send Aptos transaction (keeps your original wallet branching but adds safe checks)
+async function sendAptosTransaction(walletType, recipient, amount) {
+  // Convert APT to Octas (1 APT = 100_000_000 octas)
+  const amountInOctas = BigInt(Math.floor(amount * 100000000));
+
+  const payload = {
+    type: "entry_function_payload",
+    function: "0x1::coin::transfer",
+    type_arguments: ["0x1::aptos_coin::AptosCoin"],
+    arguments: [recipient, amountInOctas.toString()]
+  };
+
+  let pendingTransaction;
+
+  // Support common wallet integrations
+  try {
+    if ((walletType && walletType.toUpperCase().includes('PETRA')) && window.petra && typeof window.petra.signAndSubmitTransaction === 'function') {
+      pendingTransaction = await window.petra.signAndSubmitTransaction(payload);
+    } else if ((walletType && walletType.toUpperCase().includes('MARTIAN')) && window.martian && typeof window.martian.signAndSubmitTransaction === 'function') {
+      pendingTransaction = await window.martian.signAndSubmitTransaction(payload);
+    } else if ((walletType && walletType.toUpperCase().includes('PONTEM')) && window.pontem && typeof window.pontem.signAndSubmitTransaction === 'function') {
+      pendingTransaction = await window.pontem.signAndSubmitTransaction(payload);
+    } else if (window.aptosWallet && typeof window.aptosWallet.signAndSubmitTransaction === 'function') {
+      // Generic adapter API
+      pendingTransaction = await window.aptosWallet.signAndSubmitTransaction(payload);
+    } else {
+      throw new Error('Wallet not connected or unsupported');
+    }
+  } catch (e) {
+    console.error('Error sending transaction via wallet', e);
+    throw e;
+  }
+
+  // Try to get a transaction hash from the returned object
+  const hash = pendingTransaction && (pendingTransaction.hash || pendingTransaction.result?.hash || pendingTransaction.transaction_hash);
+  if (!hash) {
+    // Some wallets may already wait for confirmation and return full txn; if so return pendingTransaction
+    return pendingTransaction;
+  }
+
+  // Wait for confirmation on-chain to ensure success
+  await waitForTransaction(hash);
+
+  return pendingTransaction;
+}
+
+// Wait for transaction confirmation
+async function waitForTransaction(txHash) {
+  const maxAttempts = 20;
+  let attempts = 0;
+
+  // Protect against empty hash
+  if (!txHash) throw new Error('Empty transaction hash');
+
+  while (attempts < maxAttempts) {
+    try {
+      const response = await fetch(
+        `https://fullnode.testnet.aptoslabs.com/v1/transactions/by_hash/${txHash}`
+      );
+
+      if (response.ok) {
+        const transaction = await response.json();
+        // `success` is true when VM status is success for Aptos node
+        if (transaction && (transaction.success || transaction.vm_status === 'Executed')) {
+          return transaction;
+        } else if (transaction && transaction.success === false) {
+          throw new Error('Transaction failed on-chain');
+        }
+        // else not yet confirmed
+      } else if (response.status === 404) {
+        // not found yet, keep polling
+      } else {
+        // other status codes - log and continue polling
+        console.warn('Unexpected response while checking tx status', response.status);
+      }
+    } catch (error) {
+      // network or parsing error - continue waiting
+      // console.debug('waitForTransaction - not ready yet', error);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    attempts++;
+  }
+
+  throw new Error('Transaction confirmation timeout');
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Initializing donation system...');
+  // Initialize immediately
+  initDonationSystem();
+
+  // Also try again after a short delay to ensure wallet system is loaded
+  setTimeout(() => {
+    initDonationSystem();
+  }, 1000);
+});
+
+// Export for global use
+window.aptosDonation = {
+  donate: handleStartDonating,
+  createCause: handleCreateCause,
+  isProcessing: () => donationState.inProgress
+};
+
+// Ensure hero buttons are always clickable (extra safety)
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Setting up hero buttons...');
+
+  // Make absolutely sure buttons are enabled
+  const startBtn = document.querySelector('.get-started-btn');
+  const createBtn = document.querySelector('.secondary-btn');
+
+  if (startBtn) {
+    startBtn.style.opacity = '1';
+    startBtn.style.cursor = 'pointer';
+    startBtn.style.pointerEvents = 'auto';
+    startBtn.removeAttribute('disabled');
+    console.log('Start Donating button enabled');
+  }
+
+  if (createBtn) {
+    createBtn.style.opacity = '1';
+    createBtn.style.cursor = 'pointer';
+    createBtn.style.pointerEvents = 'auto';
+    createBtn.removeAttribute('disabled');
+    console.log('Create Cause button enabled');
+  }
+
+  // Re-initialize Lucide icons safely
+  safeCreateLucideIcons();
+});
+
+// Small helper (keeps present behaviour)
+function setDonationAmountLocal(amount) {
+  const popup = Swal.getPopup();
+  if (!popup) return;
+  const input = popup.querySelector('#donation-amount');
+  if (input) {
+    input.value = amount;
+    input.focus();
+  }
+}
+
+  </script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

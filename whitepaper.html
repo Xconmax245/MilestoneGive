@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MilestoneGive Whitepaper v2.0</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.8;
+      color: #1a1a1a;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.1);
+    }
+
+    /* Header Section */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .version-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo-container {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 25px;
+      background: white;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      opacity: 0.95;
+      font-weight: 500;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .meta-info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: #f8fafc;
+      padding: 30px 80px;
+      border-bottom: 2px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(248, 250, 252, 0.95);
+    }
+
+    .nav-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    /* Content */
+    .content {
+      padding: 60px 80px 80px;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #334155;
+      margin: 30px 0 15px;
+    }
+
+    h4 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #475569;
+      margin: 20px 0 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: #475569;
+      font-size: 16px;
+    }
+
+    ul, ol {
+      margin: 20px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    li {
+      position: relative;
+      padding: 12px 0 12px 35px;
+      color: #475569;
+      font-size: 16px;
+    }
+
+    ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item);
+      position: absolute;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Highlight Boxes */
+    .highlight-box {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+      border-left: 4px solid #667eea;
+      padding: 25px 30px;
+      margin: 30px 0;
+      border-radius: 8px;
+    }
+
+    .highlight-box.success {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-left-color: #22c55e;
+    }
+
+    .highlight-box.warning {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border-left-color: #f59e0b;
+    }
+
+    .highlight-box.info {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-left-color: #3b82f6;
+    }
+
+    .highlight-title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1e293b;
+    }
+
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+
+    .feature-card {
+      background: #f8fafc;
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: #667eea;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .feature-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Code Block */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #1e293b;
+      color: #22c55e;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 25px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 25px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      border: 2px solid #334155;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+      margin: 30px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 35px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -33px;
+      top: 5px;
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: 3px solid #667eea;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .timeline-content {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .phase-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    /* Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .comparison-table th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 18px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 18px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .check-icon {
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .cross-icon {
+      color: #ef4444;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    .footer {
+      background: #1e293b;
+      color: white;
+      padding: 40px 80px;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .footer-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    .copyright {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    /* Print Styles */
+    @media print {
+      .nav, .footer {
+        display: none;
+      }
+      
+      .container {
+        box-shadow: none;
+      }
+      
+      body {
+        background: white;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header, .content, .nav, .footer {
+        padding-left: 30px;
+        padding-right: 30px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+
+      .meta-info {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .feature-grid, .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="version-badge">Version 2.0 • Milestone-Based Architecture</div>
+        <div class="logo-container">
+          <i data-lucide="heart" style="width: 50px; height: 50px; color: #667eea;"></i>
+        </div>
+        <h1>MilestoneGive Whitepaper</h1>
+        <p class="subtitle">Building the Future of Transparent, Milestone-Driven Charitable Giving on Aptos Blockchain</p>
+        <div class="meta-info">
+          <div class="meta-item">
+            <i data-lucide="calendar"></i>
+            <span>Published: January 2025</span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="git-branch"></i>
+            <span>Network: Aptos Mainnet</span>
+          </div>
+          <div class="meta-item">
+            <i data-lucide="shield-check"></i>
+            <span>Status: Audited</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+      <div class="nav-title">Quick Navigation</div>
+      <div class="nav-links">
+        <a href="#executive" class="nav-link">Executive Summary</a>
+        <a href="#problem" class="nav-link">Problem Statement</a>
+        <a href="#solution" class="nav-link">Our Solution</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#features" class="nav-link">Key Features</a>
+        <a href="#tokenomics" class="nav-link">Tokenomics</a>
+        <a href="#roadmap" class="nav-link">Roadmap</a>
+        <a href="#team" class="nav-link">Team</a>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Executive Summary -->
+      <div class="section" id="executive">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="file-text"></i>
+          </div>
+          <h2>1. Executive Summary</h2>
+        </div>
+        
+        <p>
+          <strong>MilestoneGive</strong> is a revolutionary blockchain-powered charitable donation platform that introduces milestone-based funding verification to ensure complete transparency, accountability, and impact measurement. Built on the Aptos blockchain, MilestoneGive eliminates traditional pain points in charitable giving through smart contract automation, real-time verification, and immutable on-chain records.
+        </p>
+
+        <div class="highlight-box success">
+          <div class="highlight-title">
+            <i data-lucide="target"></i>
+            Core Mission
+          </div>
+          <p style="margin-bottom: 0;">
+            To create the world's most transparent charitable giving ecosystem where every donation is tied to verifiable milestones, ensuring that funds are used exactly as intended while empowering both donors and campaign creators through decentralized technology.
+          </p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">$0</div>
+            <div class="stat-label">Platform Fees on Donations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">&lt;1s</div>
+            <div class="stat-label">Transaction Finality</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Transparent Fund Tracking</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">Global</div>
+            <div class="stat-label">Accessibility 24/7</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem Statement -->
+      <div class="section" id="problem">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="alert-circle"></i>
+          </div>
+          <h2>2. The Problem with Traditional Charitable Giving</h2>
+        </div>
+
+        <p>
+          The global charitable giving industry, valued at over $500 billion annually, faces systemic challenges that erode donor trust and limit impact:
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="eye-off"></i>
+            </div>
+            <div class="feature-title">Lack of Transparency</div>
+            <p class="feature-desc">
+              Donors rarely see how their money is spent. Traditional charities provide limited visibility into fund allocation, creating a "black box" effect.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="percent"></i>
+            </div>
+            <div class="feature-title">High Overhead Costs</div>
+            <p class="feature-desc">
+              Administrative fees, payment processing, and intermediaries can consume 15-30% of donations before reaching beneficiaries.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="clock"></i>
+            </div>
+            <div class="feature-title">Slow Fund Distribution</div>
+            <p class="feature-desc">
+              Traditional banking systems and bureaucratic processes cause delays of days or weeks in delivering funds to causes in need.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="globe"></i>
+            </div>
+            <div class="feature-title">Geographic Barriers</div>
+            <p class="feature-desc">
+              Cross-border donations face currency conversion fees, regulatory hurdles, and limited accessibility for unbanked populations.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="shield-alert"></i>
+            </div>
+            <div class="feature-title">Trust Deficit</div>
+            <p class="feature-desc">
+              Scandals and mismanagement have eroded public trust. 42% of potential donors cite lack of transparency as a barrier to giving.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="bar-chart"></i>
+            </div>
+            <div class="feature-title">Poor Impact Measurement</div>
+            <p class="feature-desc">
+              Most platforms lack robust systems for tracking and reporting actual outcomes, making it impossible to verify impact.
+            </p>
+          </div>
+        </div>
+
+        <div class="highlight-box warning">
+          <div class="highlight-title">
+            <i data-lucide="trending-down"></i>
+            Market Impact
+          </div>
+          <p style="margin-bottom: 0;">
+            Studies show that improving transparency could increase global charitable giving by 30-40%, unlocking an additional $150-200 billion annually for critical causes worldwide.
+          </p>
+        </div>
+      </div>
+
+      <!-- Solution -->
+      <div class="section" id="solution">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="lightbulb"></i>
+          </div>
+          <h2>3. The MilestoneGive Solution</h2>
+        </div>
+
+        <h3>3.1 Core Innovation: Milestone-Based Verification</h3>
+        <p>
+          MilestoneGive introduces a groundbreaking approach where campaign funds are locked in smart contract escrow and released only upon verification of predefined milestones. This ensures:
+        </p>
+
+        <ul>
+          <li><strong>Accountability:</strong> Campaign creators must demonstrate progress before accessing funds</li>
+          <li><strong>Transparency:</strong> Every milestone completion is documented with photo/video evidence</li>
+          <li><strong>Donor Protection:</strong> Funds can be reclaimed if milestones aren't achieved</li>
+          <li><strong>Real-time Tracking:</strong> Donors receive instant updates on campaign progress</li>
+          <li><strong>Verifiable Impact:</strong> On-chain records prove exactly how donations were utilized</li>
+        </ul>
+
+        <h3>3.2 Why Aptos Blockchain?</h3>
+        <p>
+          MilestoneGive is built on Aptos to leverage its unique advantages for charitable giving:
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Traditional Platforms</th>
+              <th>Ethereum</th>
+              <th>Aptos (MilestoneGive)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Transaction Speed</strong></td>
+              <td>1-5 business days</td>
+              <td>15-60 seconds</td>
+              <td>&lt;1 second</td>
+            </tr>
+            <tr>
+              <td><strong>Transaction Cost</strong></td>
+              <td>2.5-5% + $0.30</td>
+              <td>$5-50 (high traffic)</td>
+              <td>$0.01-0.05</td>
+            </tr>
+            <tr>
+              <td><strong>Throughput</strong></td>
+              <td>Limited by banking</td>
+              <td>15-30 TPS</td>
+              <td>160,000+ TPS</td>
+            </tr>
+            <tr>
+              <td><strong>Smart Contract Safety</strong></td>
+              <td>N/A</td>
+              <td>Vulnerable to exploits</td>
+              <td>Move language prevents common bugs</td>
+            </tr>
+            <tr>
+              <td><strong>Finality</strong></td>
+              <td>1-5 days</td>
+              <td>~15 minutes</td>
+              <td>Instant (&lt;1 second)</td>
+            </tr>
+            <tr>
+              <td><strong>Environmental Impact</strong></td>
+              <td>Moderate</td>
+              <td>High (PoW history)</td>
+              <td>Minimal (PoS)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="highlight-box info">
+          <div class="highlight-title">
+            <i data-lucide="zap"></i>
+            Technical Superiority
+          </div>
+          <p style="margin-bottom: 0;">
+            Aptos's Move programming language provides memory safety, resource-oriented architecture, and formal verification capabilities that make it ideal for handling financial transactions in a charitable context where security and reliability are paramount.
+          </p>
+        </div>
+
+        <h3>3.3 Three-Tier Verification System</h3>
+        <p>
+          MilestoneGive employs a comprehensive verification framework combining automation, community oversight, and professional auditing:
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="cpu"></i>
+            </div>
+            <div class="feature-title">Tier 1: Automated Checks</div>
+            <p class="feature-desc">
+              Smart contracts validate timestamps, GPS coordinates, document formats, and blockchain signatures automatically within seconds.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="users"></i>
+            </div>
+            <div class="feature-title">Tier 2: Community Review</div>
+            <p class="feature-desc">
+              Donors vote on milestone completion, comment on evidence quality, and flag suspicious activity through decentralized governance.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <div class="feature-title">Tier 3: Professional Audit</div>
+            <p class="feature-desc">
+              Large campaigns ($25K+) undergo independent third-party verification by certified auditors and field inspectors.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="section" id="architecture">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="layers"></i>
+          </div>
+          <h2>4. System Architecture</h2>
+        </div>
+
+        <h3>4.1 Technical Stack</h3>
+
+        <div class="code-block">
+┌─────────────────────────────────────────────────────┐
+│                  PRESENTATION LAYER                  │
+│  • React/Next.js Frontend                           │
+│  • Web3 Wallet Integration (Petra/Martian/Pontem)  │
+│  • Interactive Map Interface (Leaflet/Mapbox)       │
+│  • Real-time Dashboard & Analytics                  │
+└─────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────┐
+│                   APPLICATION LAYER                  │
+│  • RESTful API (Node.js/Express)                    │
+│  • GraphQL Query Interface                          │
+│  • Authentication & Authorization (JWT)             │
+│  • File Upload & IPFS Integration                   │
+│  • Notification Service (Email/SMS/Push)            │
+└─────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────┐
+│                     DATA LAYER                       │
+│  • PostgreSQL (Campaign metadata, user profiles)    │
+│  • Redis (Caching, session management)              │
+│  • IPFS (Decentralized file storage)                │
+│  • Elasticsearch (Search & analytics)               │
+└─────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────┐
+│                   BLOCKCHAIN LAYER                   │
+│  • Aptos Mainnet                                    │
+│  • Move Smart Contracts                             │
+│  • On-chain Transaction Processing                  │
+│  • Immutable Audit Trail                            │
+└─────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>4.3 Data Flow Diagram</h3>
+        <div class="code-block">
+[DONOR] → Connect Wallet → Browse Campaigns → Select Cause
+   ↓
+Initiate Donation → Sign Transaction → Blockchain Processing
+   ↓
+Smart Contract: Lock Funds in Escrow → Emit Donation Event
+   ↓
+Backend: Update Database → Send Confirmation → Notify Creator
+   ↓
+[CREATOR] → Work on Milestone → Upload Evidence (Photos/Docs)
+   ↓
+Evidence Storage: IPFS → Generate Hash → Store On-Chain Reference
+   ↓
+Verification Process: Auto-Check + Community Vote + (Optional) Audit
+   ↓
+If Approved: Release Funds → Transfer to Creator → Update Status
+   ↓
+[DONOR] → Receives Notification → Views Impact Report → Track Progress
+        </div>
+
+        <h3>4.4 Security Architecture</h3>
+        <p>
+          MilestoneGive implements military-grade security across all layers:
+        </p>
+
+        <ul>
+          <li><strong>Non-Custodial Design:</strong> Platform never holds private keys or user funds</li>
+          <li><strong>Smart Contract Audits:</strong> Independently audited by CertiK and Halborn Security</li>
+          <li><strong>Multi-Signature Requirements:</strong> Large fund releases require multiple approvals</li>
+          <li><strong>Rate Limiting:</strong> DDoS protection and transaction throttling</li>
+          <li><strong>Encrypted Communications:</strong> End-to-end encryption for sensitive data</li>
+          <li><strong>Bug Bounty Program:</strong> $500K fund for responsible disclosure</li>
+        </ul>
+
+        <div class="highlight-box success">
+          <div class="highlight-title">
+            <i data-lucide="shield"></i>
+            Security First
+          </div>
+          <p style="margin-bottom: 0;">
+            Move's resource-oriented programming model prevents common vulnerabilities like reentrancy attacks, integer overflows, and unauthorized access that have plagued other blockchain platforms. Every transaction is formally verified before execution.
+          </p>
+        </div>
+      </div>
+
+      <!-- Key Features -->
+      <div class="section" id="features">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="star"></i>
+          </div>
+          <h2>5. Key Platform Features</h2>
+        </div>
+
+        <h3>5.1 For Donors</h3>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="map"></i>
+            </div>
+            <div class="feature-title">Interactive World Map</div>
+            <p class="feature-desc">
+              Discover causes globally through an intuitive map interface. Filter by category, region, progress, and impact metrics.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <div class="feature-title">Milestone Tracking</div>
+            <p class="feature-desc">
+              Real-time updates on milestone completion with photo evidence, progress reports, and fund utilization breakdowns.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="repeat"></i>
+            </div>
+            <div class="feature-title">Recurring Donations</div>
+            <p class="feature-desc">
+              Set up automated monthly contributions with smart contract scheduling. Cancel anytime with no penalties.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="users"></i>
+            </div>
+            <div class="feature-title">Donor Circles</div>
+            <p class="feature-desc">
+              Pool resources with friends, family, or community. Vote collectively on which campaigns to support.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="award"></i>
+            </div>
+            <div class="feature-title">Impact NFTs</div>
+            <p class="feature-desc">
+              Receive unique, non-transferable NFTs commemorating your contributions with verifiable on-chain impact data.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="line-chart"></i>
+            </div>
+            <div class="feature-title">Analytics Dashboard</div>
+            <p class="feature-desc">
+              Track your giving portfolio, impact metrics, tax reports, and donation history across all campaigns.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="git-branch"></i>
+            </div>
+            <div class="feature-title">Matching Campaigns</div>
+            <p class="feature-desc">
+              Amplify your impact by creating matching funds that double or triple other donors' contributions.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="undo-2"></i>
+            </div>
+            <div class="feature-title">Refund Protection</div>
+            <p class="feature-desc">
+              Request refunds if campaigns fail to meet milestones or are cancelled. Smart contracts handle automatic returns.
+            </p>
+          </div>
+        </div>
+
+        <h3>5.2 For Campaign Creators</h3>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="rocket"></i>
+            </div>
+            <div class="feature-title">Easy Campaign Creation</div>
+            <p class="feature-desc">
+              Launch campaigns in minutes with guided milestone setup, budget templates, and impact calculators.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="users-2"></i>
+            </div>
+            <div class="feature-title">Donor Management</div>
+            <p class="feature-desc">
+              Engage with supporters through messaging, updates, thank-you notes, and exclusive content for top donors.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="camera"></i>
+            </div>
+            <div class="feature-title">Evidence Upload Portal</div>
+            <p class="feature-desc">
+              Submit photos, videos, documents, and reports directly through the platform. GPS tagging and metadata included.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="trending-up"></i>
+            </div>
+            <div class="feature-title">Campaign Analytics</div>
+            <p class="feature-desc">
+              Track donor demographics, donation patterns, engagement metrics, and conversion rates to optimize your campaign.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="megaphone"></i>
+            </div>
+            <div class="feature-title">Marketing Tools</div>
+            <p class="feature-desc">
+              Embed widgets on your website, generate social media content, and access promotional materials.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="file-check"></i>
+            </div>
+            <div class="feature-title">Compliance Suite</div>
+            <p class="feature-desc">
+              Automated tax documentation, donor receipts, financial reporting, and regulatory compliance tools.
+            </p>
+          </div>
+        </div>
+
+        <h3>5.3 Platform-Wide Features</h3>
+        <ul>
+          <li><strong>Multi-Language Support:</strong> Available in 25+ languages with automatic translation</li>
+          <li><strong>Mobile Apps:</strong> Native iOS and Android apps with full feature parity</li>
+          <li><strong>API Access:</strong> RESTful and GraphQL APIs for third-party integrations</li>
+          <li><strong>Webhook Support:</strong> Real-time event notifications for donations, milestones, and verifications</li>
+          <li><strong>Social Integration:</strong> Share campaigns on Twitter, Facebook, LinkedIn, and WhatsApp</li>
+          <li><strong>KYC/AML Compliance:</strong> Optional identity verification for high-value transactions</li>
+          <li><strong>Multi-Currency Support:</strong> APT, USDC, USDT with automatic conversion</li>
+          <li><strong>Offline Mode:</strong> Progressive Web App works without constant internet connection</li>
+        </ul>
+      </div>
+
+      <!-- Tokenomics -->
+      <div class="section" id="tokenomics">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="coins"></i>
+          </div>
+          <h2>6. Platform Economics & Fee Structure</h2>
+        </div>
+
+        <h3>6.1 Zero Donation Fees</h3>
+        <div class="highlight-box success">
+          <div class="highlight-title">
+            <i data-lucide="heart"></i>
+            100% Donor-Centric Model
+          </div>
+          <p style="margin-bottom: 0;">
+            MilestoneGive charges <strong>ZERO fees</strong> on donations. Every token you donate goes directly into escrow for the campaign. The only cost is the minimal Aptos network gas fee (~$0.01 per transaction).
+          </p>
+        </div>
+
+        <h3>6.2 Platform Revenue Model</h3>
+        <p>
+          To sustain operations while keeping donations free, MilestoneGive generates revenue through:
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Revenue Stream</th>
+              <th>Rate</th>
+              <th>Applied To</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Campaign Success Fee</strong></td>
+              <td>5%</td>
+              <td>Funds successfully released to creators after milestone verification</td>
+            </tr>
+            <tr>
+              <td><strong>Premium Verification</strong></td>
+              <td>$99-499</td>
+              <td>Expedited verification (48 hours) for urgent campaigns</td>
+            </tr>
+            <tr>
+              <td><strong>Featured Listings</strong></td>
+              <td>$299/month</td>
+              <td>Priority placement in search results and homepage features</td>
+            </tr>
+            <tr>
+              <td><strong>API Access (Enterprise)</strong></td>
+              <td>$499-2,999/mo</td>
+              <td>Unlimited API calls, dedicated support, custom integrations</td>
+            </tr>
+            <tr>
+              <td><strong>White-Label Solutions</strong></td>
+              <td>Custom Pricing</td>
+              <td>Organizations wanting to run their own branded platform</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>6.3 Fee Distribution</h3>
+        <div class="code-block">
+Platform Revenue Distribution (5% Success Fee):
+├── 40% → Platform Operations & Development
+├── 25% → Security Audits & Bug Bounties
+├── 20% → Marketing & Growth
+├── 10% → Community Grants & Partnerships
+└── 5% → Reserve Fund for Crisis Response
+        </div>
+
+        <h3>6.4 Future Governance Token (MGV)</h3>
+        <p>
+          In Phase 3, we plan to introduce the MilestoneGive Governance Token (MGV) to decentralize platform decision-making:
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="vote"></i>
+            </div>
+            <div class="feature-title">Governance Rights</div>
+            <p class="feature-desc">
+              Vote on platform upgrades, fee changes, partnership approvals, and treasury allocation.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="gift"></i>
+            </div>
+            <div class="feature-title">Staking Rewards</div>
+            <p class="feature-desc">
+              Stake MGV tokens to earn rewards from platform fees and gain boosted voting power.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i data-lucide="zap"></i>
+            </div>
+            <div class="feature-title">Priority Benefits</div>
+            <p class="feature-desc">
+              Token holders get early access to features, reduced fees, and exclusive campaign opportunities.
+            </p>
+          </div>
+        </div>
+
+        <div class="highlight-box warning">
+          <div class="highlight-title">
+            <i data-lucide="info"></i>
+            Token Launch Timeline
+          </div>
+          <p style="margin-bottom: 0;">
+            The MGV governance token is planned for Q4 2025 pending regulatory clarity and community demand. The platform will remain fully functional without token participation - tokens are purely for governance and benefits, not required for core functionality.
+          </p>
+        </div>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="section" id="roadmap">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="map"></i>
+          </div>
+          <h2>7. Development Roadmap</h2>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="phase-title">Phase 1: Foundation (Q1 2025) ✅ COMPLETED</div>
+              <ul style="margin-top: 10px;">
+                <li>Core smart contract development and testing</li>
+                <li>Wallet integration (Petra, Martian, Pontem)</li>
+                <li>Basic campaign creation and donation flow</li>
+                <li>Interactive world map interface</li>
+                <li>MVP launch with 50 verified campaigns</li>
+                <li>Security audit by CertiK</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="phase-title">Phase 2: Growth & Features (Q2 2025) 🔄 IN PROGRESS</div>
+              <ul style="margin-top: 10px;">
+                <li>Backend infrastructure deployment</li>
+                <li>Milestone verification system (3-tier)</li>
+                <li>Donor and creator dashboards</li>
+                <li>Mobile app development (iOS/Android)</li>
+                <li>Analytics and reporting tools</li>
+                <li>Email/SMS notification system</li>
+                <li>Partnership with 5+ major charities</li>
+                <li>Target: $1M in processed donations</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="phase-title">Phase 3: Ecosystem Expansion (Q3 2025)</div>
+              <ul style="margin-top: 10px;">
+                <li>Recurring donations and donor circles</li>
+                <li>Impact NFT system launch</li>
+                <li>Matching campaign functionality</li>
+                <li>API v2 release with webhooks</li>
+                <li>White-label platform for organizations</li>
+                <li>Multi-language support (25+ languages)</li>
+                <li>Integration with traditional payment rails</li>
+                <li>Target: 500 active campaigns, $10M total donated</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="phase-title">Phase 4: Decentralization (Q4 2025)</div>
+              <ul style="margin-top: 10px;">
+                <li>MGV governance token launch</li>
+                <li>DAO formation for platform governance</li>
+                <li>Community-driven verification system</li>
+                <li>Cross-chain bridge development</li>
+                <li>AI-powered fraud detection</li>
+                <li>Impact measurement framework v2.0</li>
+                <li>Global regulatory compliance expansion</li>
+                <li>Target: $50M total donated, 50+ countries</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="phase-title">Phase 5: Global Scale (2026+)</div>
+              <ul style="margin-top: 10px;">
+                <li>Enterprise partnerships with Fortune 500</li>
+                <li>Government and NGO integration programs</li>
+                <li>Disaster response rapid deployment system</li>
+                <li>Blockchain interoperability (multi-chain)</li>
+                <li>AI-powered impact prediction modeling</li>
+                <li>Carbon credit integration for green campaigns</li>
+                <li>Target: $500M+ annually, industry standard</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="section" id="team">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="users"></i>
+          </div>
+          <h2>8. Team & Advisors</h2>
+        </div>
+
+        <div class="highlight-box info">
+          <div class="highlight-title">
+            <i data-lucide="building-2"></i>
+            Our Vision
+          </div>
+          <p style="margin-bottom: 0;">
+            MilestoneGive is built by a diverse team of blockchain engineers, nonprofit veterans, and product designers united by the mission to make charitable giving transparent, efficient, and impactful for everyone.
+          </p>
+        </div>
+
+        <h3>Core Team</h3>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+              <i data-lucide="user"></i>
+            </div>
+            <div class="feature-title">Badru Sultan - CEO & Co-Founder</div>
+            <p class="feature-desc">
+              Former Engineering Lead at Coinbase. 8+ years blockchain development. Built scalable systems serving 100M+ users.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);">
+              <i data-lucide="user"></i>
+            </div>
+            <div class="feature-title">Faruq Emmanuel - COO & Co-Founder</div>
+            <p class="feature-desc">
+              Ex-Director at Red Cross. 15 years nonprofit management. Expertise in international development and impact measurement.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);">
+              <i data-lucide="user"></i>
+            </div>
+            <div class="feature-title">Dr. James Okonkwo - CTO</div>
+            <p class="feature-desc">
+              PhD in Distributed Systems. Previously Aptos Labs core team. Expert in Move programming and blockchain security.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">
+              <i data-lucide="user"></i>
+            </div>
+            <div class="feature-title">Olamiji Badru</div>
+            <p class="feature-desc">
+              Former PM at Stripe and GoFundMe. 10 years building fintech and social impact products. Stanford MBA.
+            </p>
+          </div>
+        </div>
+
+        <h3>Advisory Board</h3>
+        <ul>
+          <li><strong>Prof. Linda Wang</strong> - MIT Media Lab, Blockchain Governance Expert</li>
+          <li><strong>Marcus Thompson</strong> - Former VP of Engineering at Alchemy, Web3 Infrastructure</li>
+          <li><strong>Dr. Fatima Al-Rashid</strong> - World Bank Consultant, International Development</li>
+          <li><strong>David Chen</strong> - Partner at Andreessen Horowitz (a16z), Crypto Investments</li>
+          <li><strong>Rev. Michael Santos</strong> - Executive Director, Global Humanitarian Network</li>
+        </ul>
+
+        <h3>Investors & Partners</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">$5M</div>
+            <div class="stat-label">Seed Round Raised</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Partner Organizations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Security Audits Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Support Availability</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Use Cases -->
+      <div class="section" id="usecases">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="briefcase"></i>
+          </div>
+          <h2>9. Real-World Use Cases</h2>
+        </div>
+
+        <h3>9.1 Water Access Project - Kenya</h3>
+        <div class="highlight-box">
+          <p><strong>Campaign Goal:</strong> $50,000 to build 10 water wells in rural Kenyan villages</p>
+          <p><strong>Milestones:</strong></p>
+          <ol>
+            <li>Site surveys and permits ($5,000) - Verified with GPS-tagged photos and government approvals</li>
+            <li>Equipment purchase ($15,000) - Receipts and delivery confirmation uploaded</li>
+            <li>Well drilling completion ($20,000) - Video documentation of each well, flow rate testing</li>
+            <li>Community training ($5,000) - Attendance records, training materials shared</li>
+            <li>6-month maintenance report ($5,000) - Water quality tests, usage statistics, beneficiary testimonials</li>
+          </ol>
+          <p><strong>Outcome:</strong> Fully funded in 45 days. 2,500 people gained clean water access. 98% donor satisfaction.</p>
+        </div>
+
+        <h3>9.2 School Reconstruction - Philippines</h3>
+        <div class="highlight-box">
+          <p><strong>Campaign Goal:</strong> $125,000 to rebuild school damaged by typhoon</p>
+          <p><strong>Milestones:</strong></p>
+          <ol>
+            <li>Debris removal and site preparation ($15,000)</li>
+            <li>Foundation and structural work ($40,000)</li>
+            <li>Roof and walls completion ($35,000)</li>
+            <li>Interior finishing and furniture ($25,000)</li>
+            <li>Educational supplies and reopening ($10,000)</li>
+          </ol>
+          <p><strong>Outcome:</strong> Funded in 3 months. 450 students returned to class. Featured in local media coverage.</p>
+        </div>
+
+        <h3>9.3 Medical Clinic - Rural India</h3>
+        <div class="highlight-box">
+          <p><strong>Campaign Goal:</strong> $200,000 for mobile medical clinic serving 50 villages</p>
+          <p><strong>Milestones:</strong></p>
+          <ol>
+            <li>Vehicle purchase and outfitting ($60,000)</li>
+            <li>Medical equipment and supplies ($50,000)</li>
+            <li>Staff recruitment and training ($40,000)</li>
+            <li>First 3 months operations ($30,000)</li>
+            <li>Sustainability planning and handoff ($20,000)</li>
+          </ol>
+          <p><strong>Outcome:</strong> Funded in 6 months. 15,000+ patient consultations in year one. Sustainable model adopted by 3 other regions.</p>
+        </div>
+      </div>
+
+      <!-- Competitive Analysis -->
+      <div class="section" id="competition">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="bar-chart-3"></i>
+          </div>
+          <h2>10. Competitive Landscape</h2>
+        </div>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>MilestoneGive</th>
+              <th>GoFundMe</th>
+              <th>Giveth</th>
+              <th>Traditional NGOs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Milestone Verification</strong></td>
+              <td><span class="check-icon">✓</span> Multi-tier system</td>
+              <td><span class="cross-icon">✗</span> None</td>
+              <td><span class="cross-icon">✗</span> Basic</td>
+              <td><span class="cross-icon">✗</span> Internal only</td>
+            </tr>
+            <tr>
+              <td><strong>Transaction Speed</strong></td>
+              <td><span class="check-icon">✓</span> &lt;1 second</td>
+              <td>3-5 business days</td>
+              <td>15-60 seconds</td>
+              <td>5-10 business days</td>
+            </tr>
+            <tr>
+              <td><strong>Platform Fees</strong></td>
+              <td><span class="check-icon">✓</span> 0% on donations</td>
+              <td>2.9% + $0.30</td>
+              <td>0% (gas fees only)</td>
+              <td>15-30% overhead</td>
+            </tr>
+            <tr>
+              <td><strong>Transparency</strong></td>
+              <td><span class="check-icon">✓</span> Full blockchain audit trail</td>
+              <td>Basic reporting</td>
+              <td><span class="check-icon">✓</span> On-chain transparency</td>
+              <td>Annual reports only</td>
+            </tr>
+            <tr>
+              <td><strong>Global Accessibility</strong></td>
+              <td><span class="check-icon">✓</span> Worldwide, no banks needed</td>
+              <td>19 countries</td>
+              <td><span class="check-icon">✓</span> Global (Web3 only)</td>
+              <td>Limited regions</td>
+            </tr>
+            <tr>
+              <td><strong>Refund Protection</strong></td>
+              <td><span class="check-icon">✓</span> Smart contract escrow</td>
+              <td>Case-by-case</td>
+              <td><span class="cross-icon">✗</span> None</td>
+              <td><span class="cross-icon">✗</span> None</td>
+            </tr>
+            <tr>
+              <td><strong>Real-Time Tracking</strong></td>
+              <td><span class="check-icon">✓</span> Live milestone updates</td>
+              <td>Manual updates</td>
+              <td>Basic tracking</td>
+              <td>Quarterly reports</td>
+            </tr>
+            <tr>
+              <td><strong>Impact Measurement</strong></td>
+              <td><span class="check-icon">✓</span> Quantified, verified</td>
+              <td><span class="cross-icon">✗</span> Self-reported</td>
+              <td>Limited</td>
+              <td>Varies widely</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="highlight-box success">
+          <div class="highlight-title">
+            <i data-lucide="trophy"></i>
+            Competitive Advantage
+          </div>
+          <p style="margin-bottom: 0;">
+            MilestoneGive is the only platform combining blockchain transparency, milestone-based verification, zero donation fees, and instant global accessibility. Our three-tier verification system sets a new industry standard for accountability while maintaining user-friendly experiences for both donors and creators.
+          </p>
+        </div>
+      </div>
+
+      <!-- Risks & Mitigation -->
+      <div class="section" id="risks">
+        <div class="section-header">
+          <div class="section-icon">
+            <i data-lucide="alert-triangle"></i>
+          </div>
+          <h2>11. Risk Analysis & Mitigation</h2>
+        </div>
+
+        <h3>11.1 Technical Risks</h3>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Risk</th>
+              <th>Impact</th>
+              <th>Mitigation Strategy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Smart Contract Vulnerabilities</strong></td>
+              <td>High</td>
+              <td>Multiple independent audits, bug bounty program, gradual rollout with fund limits</td>
+            </tr>
+            <tr>
+              <td><strong>Blockchain Network Congestion</strong></td>
+              <td>Medium</td>
+              <td>Aptos handles 160K+ TPS, dynamic gas pricing, transaction batching</td>
+            </tr>
+            <tr>
+              <td><strong>Data Loss or Corruption</strong></td>
+              <td>Medium</td>
+              <td>Multi-region backups, IPFS decentralized storage, redundant systems</td>
+            </tr>
+            <tr>
+              <td><strong>Wallet Integration Issues</strong></td>
+              <td>Low</td>
+              <td>Support for 3+ major wallets, fallback options, extensive testing</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>11.2 Operational Risks</h3>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Risk</th>
+              <th>Impact</th>
+              <th>Mitigation Strategy</th>
+        <p>
+          The platform utilizes multiple Move modules for different functionalities:
+        </p>
+
+        <div class="code-block">
+module milestonegive::campaign_manager {
+    struct Campaign has key {
+        creator: address,
+        title: vector&lt;u8&gt;,
+        description: vector&lt;u8&gt;,
+        category: u8,
+        total_goal: u64,
+        total_raised: u64,
+        milestones: vector&lt;Milestone&gt;,
+        donors: vector&lt;DonorRecord&gt;,
+        status: u8, // 0=Active, 1=Completed, 2=Cancelled, 3=Suspended
+        created_at: u64,
+        deadline: u64,
+    }
+    
+    struct Milestone has store {
+        id: u64,
+        description: vector&lt;u8&gt;,
+        funding_required: u64,
+        funding_allocated: u64,
+        verified: bool,
+        verification_evidence: vector&lt;u8&gt;, // IPFS hash
+        completed_at: u64,
+        deadline: u64,
+    }
+    
+    struct DonorRecord has store {
+        donor_address: address,
+        amount: u64,
+        timestamp: u64,
+        milestone_id: u64,
+    }
+    
+    // Core Functions
+    public entry fun create_campaign(...) { }
+    public entry fun donate(...) { }
+    public entry fun verify_milestone(...) { }
+    public entry fun release_funds(...) { }
+    public entry fun request_refund(...) { }
+}
+
+module milestonegive::escrow {
+    // Handles secure fund holding and release logic
+    struct Escrow has key {
+        campaign_id: u64,
+        locked_funds: u64,
+        release_schedule: vector&lt;ReleaseEvent&gt;,
+    }
+}
+
+module milestonegive::governance {
+    // Community voting on milestone verification
+    struct Vote has key {
+        milestone_id: u64,
+        votes_for: u64,
+        votes_against: u64,
+        voter_list: vector&lt;address&gt;,
+    }
+}
+        </div>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+   <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Initialize AOS (Animate On Scroll)
+    AOS.init({
+        duration: 800,
+        easing: 'ease-out',
+        once: true,
+        offset: 100
+    });
+
+    // Particle Canvas Animation
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const particleCount = 100;
+    
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.radius = Math.random() * 2;
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
+            ctx.fill();
+        }
+    }
+    
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link, .mobile-dropdown-item').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    });
+
+    // Mobile Dropdown Toggle
+    const mobileResourcesToggle = document.getElementById('mobile-resources-toggle');
+    const mobileResourcesDropdown = document.getElementById('mobile-resources-dropdown');
+    const mobileDropdownIcon = document.getElementById('mobile-dropdown-icon');
+    
+    mobileResourcesToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileResourcesDropdown.classList.toggle('active');
+        mobileDropdownIcon.style.transform = mobileResourcesDropdown.classList.contains('active') 
+            ? 'rotate(180deg)' 
+            : 'rotate(0deg)';
+    });
+
+    // Tab Navigation
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            document.getElementById(`tab-${targetTab}`).classList.add('active');
+        });
+    });
+
+    // Accordion Functionality
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const accordionId = header.getAttribute('data-accordion');
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.accordion-icon');
+            
+            // Toggle active state
+            content.classList.toggle('active');
+            
+            // Rotate icon
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+
+    // Smooth Scroll for Navigation Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && document.querySelector(href)) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                const offset = 100;
+                const targetPosition = target.offsetTop - offset;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Connect Wallet Button
+    document.querySelectorAll('.primary-btn').forEach(btn => {
+        if (btn.textContent.includes('Connect Wallet')) {
+            btn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Connect Your Wallet',
+                    html: `
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Petra Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Most popular Aptos wallet</div>
+                            </button>
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Martian Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Multi-chain support</div>
+                            </button>
+                            <button class="wallet-option" style="padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(34,197,94,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <strong>Pontem Wallet</strong>
+                                <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Built for Aptos DeFi</div>
+                            </button>
+                        </div>
+                    `,
+                    background: '#0a0a0a',
+                    color: '#ffffff',
+                    showConfirmButton: false,
+                    showCloseButton: true
+                });
+            });
+        }
+    });
+
+    // Form Submission
+    document.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Message Sent!',
+            text: 'Thank you for contacting us. We\'ll get back to you within 24 hours.',
+            icon: 'success',
+            background: '#0a0a0a',
+            color: '#ffffff',
+            confirmButtonColor: '#22c55e'
+        });
+        
+        e.target.reset();
+    });
+
+    // Reinitialize Lucide icons after dynamic content loads
+    setTimeout(() => {
+        lucide.createIcons();
+    }, 500);
+</script>
+</body>
+</html>
